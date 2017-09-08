@@ -12,7 +12,11 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    'base58==0.2.5',
+    'pymultihash==0.8.2',
+    'py-multibase==0.1.0',
+    'py-multicodec==0.1.0',
+    'morphys==1.0.0',
 ]
 
 setup_requirements = [
