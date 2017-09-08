@@ -51,8 +51,8 @@ lint: ## check style with flake8
 	flake8 cid tests
 
 test: ## run tests quickly with the default Python
-	py.test
-	
+	py.test --cov=cid/ --cov-report=html --cov-report=term-missing --cov-branch
+
 
 test-all: ## run tests on every Python version with tox
 	tox

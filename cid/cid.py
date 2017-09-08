@@ -14,7 +14,7 @@ class BaseCID(object):
     def __init__(self, version, codec, multihash):
         self._version = version
         self._codec = codec
-        self._multihash = multihash
+        self._multihash = ensure_bytes(multihash)
 
     @property
     def version(self):
@@ -27,6 +27,13 @@ class BaseCID(object):
     @property
     def multihash(self):
         return self._multihash
+
+    @property
+    def buffer(self):
+        raise NotImplementedError
+
+    def encode(self, *args, **kwargs):
+        raise NotImplementedError
 
     def __repr__(self):
         def truncate(s, length):
@@ -41,7 +48,7 @@ class BaseCID(object):
         )
 
     def __str__(self):
-        ensure_unicode(self.buffer)
+        return ensure_unicode(self.encode())
 
     def __eq__(self, other):
         return (self.version == other.version) and (self.codec == other.codec) and (self.multihash == other.multihash)
@@ -99,7 +106,7 @@ def make_cid(*args):
         elif isinstance(data, bytes):
             return from_bytes(data)
         else:
-            raise ValueError('invalid argument passsed, expected: str or byte, found: {}'.format(type(data)))
+            raise ValueError('invalid argument passed, expected: str or byte, found: {}'.format(type(data)))
 
     elif len(args) == 3:
         version, codec, multihash = args

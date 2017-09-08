@@ -1,9 +1,11 @@
+import base58
 import multihash
 import pytest
+from morphys import ensure_unicode
 
 import multibase
 import multicodec
-from cid import CIDv0, CIDv1, make_cid, is_cid
+from cid import CIDv0, CIDv1, make_cid, is_cid, from_string
 from multibase.multibase import CODECS
 
 
@@ -30,6 +32,9 @@ class CIDv0TestCase(object):
     def test_encode(self, cid):
         """ #encode: base58 encodes the buffer by default """
         assert cid.encode() == 'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4'
+
+    def test_str(self, cid):
+        assert str(cid) == ensure_unicode(cid.encode())
 
 
 class CIDv1TestCase(object):
@@ -59,6 +64,9 @@ class CIDv1TestCase(object):
     def test_encode_encoding(self, cid, codec):
         """ #encode uses the encoding provided for encoding """
         assert cid.encode(codec.encoding) == multibase.encode(codec.encoding, cid.buffer)
+
+    def test_str(self, cid):
+        assert str(cid) == ensure_unicode(cid.encode())
 
 
 class CIDTestCase(object):
@@ -98,35 +106,85 @@ class CIDTestCase(object):
 
 
 class MakeCIDTestCase(object):
-    def test_hash(self):
-        pass
+    def test_hash(self, test_hash):
+        """ make_cid: make_cid works with base-encoded hash """
+        assert make_cid(base58.b58encode(test_hash)) == CIDv0(test_hash)
 
-    def test_hash_invalid_type(self):
-        pass
+    def test_multibase_hash(self, test_hash):
+        """ make_cid: make_cid works with multibase-encoded hash """
+        cidstr = CIDv1('dag-pb', test_hash).encode()
+        assert make_cid(cidstr) == CIDv1('dag-pb', test_hash)
 
-    def test_version_invalid(self):
-        pass
+    @pytest.mark.parametrize('value', (
+        1,
+        1.0,
+        object(),
+        3+2j,
+        [],
+    ))
+    def test_hash_invalid_type(self, value):
+        """ make_cid: make_cid does not work if first argument is not a str or byte """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(value)
+        assert 'expected: str or byte' in str(excinfo.value)
+
+    @pytest.mark.parametrize('version', list(range(2, 5)))
+    def test_version_invalid(self, version):
+        """ make_cid: make_cid does not work if version is not 0 or 1 """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(version, 'dag-pb', b'multihash')
+        assert 'version should be 0 or 1' in str(excinfo.value)
 
     def test_codec_invalid(self):
-        pass
+        """ make_cid: make_cid does not work if codec is invalid """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(1, 'some-random-codec', b'multihash')
+        assert 'invalid codec' in str(excinfo.value)
 
-    def test_multihash_invalid(self):
-        pass
+    @pytest.mark.parametrize('value', (
+        1,
+        1.0,
+        object(),
+        3+2j,
+        [],
+    ))
+    def test_multihash_invalid(self, value):
+        """ make_cid: make_cid does not work if multihash type is invalid """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(1, 'dag-pb', value)
+        assert 'invalid type for multihash' in str(excinfo.value)
 
     def test_version_0_invalid_codec(self):
-        pass
+        """ make_cid: make_cid does not work if version 0 has incorrect codec """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(0, 'base2', b'multihash')
+        assert 'codec for version 0' in str(excinfo.value)
+
+    def test_invalid_arguments(self):
+        """ make_cid: make_cid does not work if bad arguments are passed """
+        with pytest.raises(ValueError) as excinfo:
+            make_cid(1, 2, 3, 4)
+        assert 'invalid number of arguments' in str(excinfo.value)
 
 
 class FromStringTestCase(object):
-    def test_multibase_encoded_hash(self):
-        pass
+    @pytest.fixture()
+    def cidv0(self, test_hash):
+        return CIDv0(test_hash)
 
-    def test_base58_encoded_hash(self):
-        pass
+    @pytest.fixture()
+    def cidv1(self, test_hash):
+        return CIDv1('dag-pb', test_hash)
 
-    def test_cid(self):
-        pass
+    @pytest.mark.parametrize('codec', CODECS)
+    def test_multibase_encoded_hash(self, cidv1, codec):
+        """ from_string: works for multibase-encoded strings """
+        assert from_string(cidv1.encode(codec.encoding)) == cidv1
 
+    def test_base58_encoded_hash(self, cidv0):
+        """ from_string: works for base58-encoded strings """
+        assert from_string(cidv0.encode()) == cidv0
 
-class FromBytesTestCase(FromStringTestCase):
-    pass
+    def test_cid(self, cidv0, cidv1):
+        """ from_string: works for non multibase-encoded strings """
+        assert from_string(cidv1.buffer) == cidv1
