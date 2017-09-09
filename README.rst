@@ -6,18 +6,18 @@ CID (Content IDentifier)
 .. image:: https://img.shields.io/pypi/v/py-cid.svg
         :target: https://pypi.python.org/pypi/py-cid
 
-.. image:: https://img.shields.io/travis/dhruvbaldawa/py-cid.svg?branch=master
-        :target: https://travis-ci.org/dhruvbaldawa/py-cid?branch=master
+.. image:: https://img.shields.io/travis/ipld/py-cid.svg?branch=master
+        :target: https://travis-ci.org/ipld/py-cid?branch=master
 
-.. image:: https://codecov.io/gh/dhruvbaldawa/py-cid/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/dhruvbaldawa/py-cid
+.. image:: https://codecov.io/gh/ipld/py-cid/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/ipld/py-cid
 
 .. image:: https://readthedocs.org/projects/py-cid/badge/?version=master
         :target: https://py-cid.readthedocs.io/en/latest/?badge=master
         :alt: Documentation Status
 
-.. image:: https://pyup.io/repos/github/dhruvbaldawa/py-cid/shield.svg
-     :target: https://pyup.io/repos/github/dhruvbaldawa/py-cid/
+.. image:: https://pyup.io/repos/github/ipld/py-cid/shield.svg
+     :target: https://pyup.io/repos/github/ipld/py-cid/
      :alt: Updates
 
 
@@ -89,13 +89,13 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/dhruvbaldawa/py-cid
+    $ git clone git://github.com/ipld/py-cid
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/dhruvbaldawa/py-cid/tarball/master
+    $ curl  -OL https://github.com/ipld/py-cid/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -104,8 +104,8 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/dhruvbaldawa/py-cid
-.. _tarball: https://github.com/dhruvbaldawa/py-cid/tarball/master
+.. _Github repo: https://github.com/ipld/py-cid
+.. _tarball: https://github.com/ipld/py-cid/tarball/master
 
 Supported Python versions
 =========================

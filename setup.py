@@ -35,7 +35,7 @@ setup(
     long_description=readme + '\n\n' + history,
     author="Dhruv Baldawa",
     author_email='dhruv@dhruvb.com',
-    url='https://github.com/dhruvbaldawa/py-cid',
+    url='https://github.com/ipld/py-cid',
     packages=find_packages(include=['cid']),
     include_package_data=True,
     install_requires=requirements,
