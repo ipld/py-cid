@@ -31,7 +31,7 @@ class CIDv0TestCase(object):
 
     def test_encode(self, cid):
         """ #encode: base58 encodes the buffer by default """
-        assert cid.encode() == 'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4'
+        assert cid.encode() == b'QmaozNR7DZHQK1ZcU9p7QdrshMvXqWK6gpu5rmrkPdT3L4'
 
     def test_str(self, cid):
         assert str(cid) == ensure_unicode(cid.encode())
