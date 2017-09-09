@@ -117,8 +117,3 @@ Other info
 
 * Free software: MIT license
 * Documentation: https://py-cid.readthedocs.io.
-
-Features
---------
-
-* TODO
