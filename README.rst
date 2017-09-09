@@ -9,6 +9,9 @@ CID (Content IDentifier)
 .. image:: https://img.shields.io/travis/dhruvbaldawa/py-cid.svg
         :target: https://travis-ci.org/dhruvbaldawa/py-cid
 
+.. image:: https://codecov.io/gh/dhruvbaldawa/py-cid/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/dhruvbaldawa/py-cid
+
 .. image:: https://readthedocs.org/projects/py-cid/badge/?version=latest
         :target: https://py-cid.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status

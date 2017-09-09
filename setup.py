@@ -14,19 +14,18 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'base58==0.2.5',
     'pymultihash==0.8.2',
-    'py-multibase==0.1.0',
-    'py-multicodec==0.1.0',
+    'py-multibase<0.2.0',
+    'py-multicodec<0.2.0',
     'morphys==1.0.0',
 ]
 
 setup_requirements = [
     'pytest-runner',
-    # TODO(dhruvbaldawa): put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
     'pytest',
-    # TODO: put package test requirements here
+    'pytest-cov==2.5.1',
 ]
 
 setup(
