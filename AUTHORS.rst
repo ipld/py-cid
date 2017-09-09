@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Dhruv Baldawa <dhruv@dhruvb.com>
+* Dhruv Baldawa <@dhruvbaldawa>
 
 Contributors
 ------------

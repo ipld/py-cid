@@ -65,7 +65,7 @@ class CIDv0(BaseCID):
         return self.multihash
 
     def encode(self):
-        return base58.b58encode(self.buffer)
+        return ensure_bytes(base58.b58encode(self.buffer))
 
     def to_v1(self):
         return CIDv1(self.CODEC, self.multihash)

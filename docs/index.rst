@@ -1,15 +1,19 @@
-Welcome to CID (Content IDentifier)'s documentation!
-======================================
+.. include:: ../README.rst
 
-Contents:
+More examples
+=============
+
+Check :doc:`usage` for more usage examples
+
+Table of contents
+=================
 
 .. toctree::
    :maxdepth: 2
 
-   readme
-   installation
+   index
    usage
-   modules
+   api_reference
    contributing
    authors
    history
