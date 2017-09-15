@@ -6,7 +6,7 @@ from morphys import ensure_unicode
 import multibase
 import multicodec
 from cid import CIDv0, CIDv1, make_cid, is_cid, from_string
-from multibase.multibase import CODECS
+from multibase.multibase import ENCODINGS
 
 
 @pytest.fixture(scope='session')
@@ -60,7 +60,7 @@ class CIDv1TestCase(object):
         """ #encode defaults to base58btc encoding """
         assert cid.encode() == b'zdj7WhuEjrB52m1BisYCtmjH1hSKa7yZ3jEZ9JcXaFRD51wVz'
 
-    @pytest.mark.parametrize('codec', CODECS)
+    @pytest.mark.parametrize('codec', ENCODINGS)
     def test_encode_encoding(self, cid, codec):
         """ #encode uses the encoding provided for encoding """
         assert cid.encode(codec.encoding) == multibase.encode(codec.encoding, cid.buffer)
@@ -176,7 +176,7 @@ class FromStringTestCase(object):
     def cidv1(self, test_hash):
         return CIDv1('dag-pb', test_hash)
 
-    @pytest.mark.parametrize('codec', CODECS)
+    @pytest.mark.parametrize('codec', ENCODINGS)
     def test_multibase_encoded_hash(self, cidv1, codec):
         """ from_string: works for multibase-encoded strings """
         assert from_string(cidv1.encode(codec.encoding)) == cidv1
