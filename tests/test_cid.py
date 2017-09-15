@@ -157,7 +157,7 @@ class MakeCIDTestCase(object):
     def test_version_0_invalid_codec(self):
         """ make_cid: make_cid does not work if version 0 has incorrect codec """
         with pytest.raises(ValueError) as excinfo:
-            make_cid(0, 'base2', b'multihash')
+            make_cid(0, 'bin', b'multihash')
         assert 'codec for version 0' in str(excinfo.value)
 
     def test_invalid_arguments(self):
