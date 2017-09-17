@@ -1,6 +1,5 @@
-========================
 CID (Content IDentifier)
-========================
+------------------------
 
 
 .. image:: https://img.shields.io/pypi/v/py-cid.svg
@@ -12,13 +11,9 @@ CID (Content IDentifier)
 .. image:: https://codecov.io/gh/ipld/py-cid/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/ipld/py-cid
 
-.. image:: https://readthedocs.org/projects/py-cid/badge/?version=master
-        :target: https://py-cid.readthedocs.io/en/latest/?badge=master
+.. image:: https://readthedocs.org/projects/py-cid/badge/?version=stable
+        :target: https://py-cid.readthedocs.io/en/stable/?badge=stable
         :alt: Documentation Status
-
-.. image:: https://pyup.io/repos/github/ipld/py-cid/shield.svg
-     :target: https://pyup.io/repos/github/ipld/py-cid/
-     :alt: Updates
 
 
 What is CID ?
@@ -64,7 +59,7 @@ Installation
 ============
 
 Stable release
---------------
+~~~~~~~~~~~~~~
 
 To install CID, run this command in your terminal:
 
@@ -81,7 +76,7 @@ you through the process.
 .. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
 
 From sources
-------------
+~~~~~~~~~~~~
 
 The sources for CID can be downloaded from the `Github repo`_.
 
@@ -107,13 +102,9 @@ Once you have a copy of the source, you can install it with:
 .. _Github repo: https://github.com/ipld/py-cid
 .. _tarball: https://github.com/ipld/py-cid/tarball/master
 
-Supported Python versions
-=========================
-
-**Python 3.4, 3.5, 3.6**
-
 Other info
 ==========
 
 * Free software: MIT license
 * Documentation: https://py-cid.readthedocs.io.
+* Python versions: 3.5, 3.6
