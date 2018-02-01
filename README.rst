@@ -33,7 +33,7 @@ It uses cryptographic hashes to achieve content addressing.
 
 It uses several `multiformats <https://github.com/multiformats/multiformats>`_ to achieve flexible self-description,
 namely `multihash <https://github.com/multiformats/multihash>`_ for hashes,
-`multicodec-packed <https://github.com/multiformats/multicodec/blob/master/multicodec-packed.md>`_ for data content
+`multicodec <https://github.com/multiformats/multicodec>`_ for data content
 types, and `multibase <https://github.com/multiformats/multibase>`_ to encode the CID itself into strings.
 
 Sample Usage
