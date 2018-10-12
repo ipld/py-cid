@@ -185,6 +185,11 @@ class FromStringTestCase(object):
         """ from_string: works for base58-encoded strings """
         assert from_string(cidv0.encode()) == cidv0
 
+    def test_invalid_base58_encoded_hash(self):
+        with pytest.raises(ValueError) as excinfo:
+            from_string('!')
+        assert 'multihash is not a valid base58 encoded multihash' in str(excinfo.value)
+
     def test_cid(self, cidv0, cidv1):
         """ from_string: works for non multibase-encoded strings """
         assert from_string(cidv1.buffer) == cidv1
