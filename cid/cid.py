@@ -169,6 +169,7 @@ def make_cid(*args):
     :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
     :raises ValueError: if the number of arguments is not 1 or 3
     :raises ValueError: if the only argument passed is not a ``str`` or a ``byte``
+    :raises ValueError: if the string provided is not a valid base58 encoded hash
     :raises ValueError: if 3 arguments are passed and version is not 0 or 1
     :raises ValueError: if 3 arguments are passed and the ``codec`` is not supported by ``multicodec``
     :raises ValueError: if 3 arguments are passed and the ``multihash`` is not ``str`` or ``byte``
@@ -250,6 +251,7 @@ def from_bytes(cidbytes):
         - multibase-encoded multihash
     :return: a CID object
     :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
+    :raises: `ValueError` if the base58-encoded string is not a valid string
     """
     if multibase.is_encoded(cidbytes):
         # if the bytestream is multibase encoded
@@ -270,4 +272,7 @@ def from_bytes(cidbytes):
         return make_cid(version, codec, multihash)
     else:
         # otherwise its just base58-encoded multihash
-        return make_cid(0, CIDv0.CODEC, base58.b58decode(cidbytes))
+        try:
+            return make_cid(0, CIDv0.CODEC, base58.b58decode(cidbytes))
+        except ValueError:
+            raise ValueError('multihash is not a valid base58 encoded multihash')
