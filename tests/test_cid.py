@@ -93,10 +93,27 @@ class CIDTestCase(object):
             CIDv1('base2', test_hash).to_v0()
         assert 'can only be converted for codec' in str(excinfo.value)
 
-    def test_is_cid_valid(self, test_hash):
-        assert is_cid(CIDv0(test_hash).encode())
+    @pytest.mark.parametrize('test_cidv0', (
+        'QmbWqxBEKC3P8tqsKc98xmWNzrzDtRLMiMPL8wBuTGsMnR',
+        'QmUNLLsPACCz1vLxQVkXqqLX5R1X345qqfHbsf67hvA3Nn'
+    ))
+    def test_is_cidv0_valid(self, test_cidv0):
+        assert is_cid(test_cidv0)
+        assert is_cid(CIDv0(test_cidv0).encode())
+
+    @pytest.mark.parametrize('test_cidv1', (
+        'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi',
+        'bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy',
+        'zb2rhk6GMPQF3hfzwXTaNYFLKomMeC6UXdUt6jZKPpeVirLtV'
+    ))
+    def test_is_cidv1_valid(self, test_cidv1):
+        assert is_cid(test_cidv1)
+        assert is_cid(CIDv1(test_cidv1).encode())
 
     @pytest.mark.parametrize('test_data', (
+        '!',
+        'a',
+        '1',
         'foobar',
         b'foobar',
         multibase.encode('base58btc', b'foobar'),
