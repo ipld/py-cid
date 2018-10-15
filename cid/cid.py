@@ -3,6 +3,8 @@ import base58
 
 import multibase
 
+import multihash as mh
+
 from morphys import ensure_bytes, ensure_unicode
 
 import multicodec
@@ -260,19 +262,24 @@ def from_bytes(cidbytes):
         version = int(cid[0])
         codec = multicodec.get_codec(data)
         multihash = multicodec.remove_prefix(data)
-
-        return make_cid(version, codec, multihash)
-    elif cidbytes[0] in (0, 1):
+    elif cidbytes[0] in (b'0', b'1'):
         # if the bytestream is a CID
         version = cidbytes[0]
         data = cidbytes[1:]
         codec = multicodec.get_codec(data)
         multihash = multicodec.remove_prefix(data)
-
-        return make_cid(version, codec, multihash)
     else:
         # otherwise its just base58-encoded multihash
         try:
-            return make_cid(0, CIDv0.CODEC, base58.b58decode(cidbytes))
+            version = 0
+            codec = CIDv0.CODEC
+            multihash = base58.b58decode(cidbytes)
         except ValueError:
             raise ValueError('multihash is not a valid base58 encoded multihash')
+
+    try:
+        mh.decode(multihash)
+    except ValueError:
+        raise
+
+    return make_cid(version, codec, multihash)
