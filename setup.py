@@ -16,6 +16,7 @@ requirements = [
     'py-multibase>=1.0.0,<2.0.0',
     'py-multicodec<0.2.0',
     'morphys==1.0',
+    'py-multihash>=0.2.0,<1.0.0',
 ]
 
 setup_requirements = [
@@ -25,10 +26,6 @@ setup_requirements = [
 test_requirements = [
     'pytest',
     'pytest-cov==2.5.1',
-]
-
-dependency_links = [
-    'https://github.com/carsonfarmer/py-multihash/tarball/0.1.0#egg=multihash-0.1.0',
 ]
 
 setup(
@@ -59,5 +56,4 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     setup_requires=setup_requirements,
-    dependency_links=dependency_links,
 )
