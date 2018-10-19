@@ -16,7 +16,6 @@ requirements = [
     'py-multibase>=1.0.0,<2.0.0',
     'py-multicodec<0.2.0',
     'morphys==1.0',
-    'multihash',
 ]
 
 setup_requirements = [
