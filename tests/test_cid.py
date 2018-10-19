@@ -2,12 +2,14 @@ import hashlib
 import multihash
 import pytest
 import base58
+import string
 from morphys import ensure_unicode
 
 import multibase
 import multicodec
 from cid import CIDv0, CIDv1, make_cid, is_cid, from_string
 from multibase.multibase import ENCODINGS
+from hypothesis import given, strategies as st
 
 
 @pytest.fixture(scope='session')
@@ -102,6 +104,10 @@ class CIDTestCase(object):
     def test_is_cidv0_valid(self, test_cidv0):
         assert is_cid(test_cidv0)
         assert is_cid(make_cid(test_cidv0).encode())
+
+    @given(hash=st.text(string.ascii_letters + string.digits))
+    def test_make_cid(self, hash):
+        is_cid(hash)
 
     @pytest.mark.parametrize('test_cidv1', (
         'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi',
