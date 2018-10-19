@@ -85,7 +85,7 @@ class CIDTestCase(object):
         """ check for equality between converted v0 to v1 """
         assert CIDv0(test_hash).to_v1() == CIDv1(CIDv0.CODEC, test_hash)
 
-    def test_cidv1_eq_cidv0(self):
+    def test_cidv1_eq_cidv0(self, test_hash):
         """ check for equality between converted v1 to v0 """
         assert CIDv1(CIDv0.CODEC, test_hash).to_v0() == CIDv0(test_hash)
 
@@ -101,7 +101,7 @@ class CIDTestCase(object):
     ))
     def test_is_cidv0_valid(self, test_cidv0):
         assert is_cid(test_cidv0)
-#        assert is_cid(CIDv0(test_cidv0).encode())
+        assert is_cid(make_cid(test_cidv0).encode())
 
     @pytest.mark.parametrize('test_cidv1', (
         'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi',
@@ -109,9 +109,8 @@ class CIDTestCase(object):
         'zb2rhk6GMPQF3hfzwXTaNYFLKomMeC6UXdUt6jZKPpeVirLtV'
     ))
     def test_is_cidv1_valid(self, test_cidv1):
-        import ipdb; ipdb.set_trace()
         assert is_cid(test_cidv1)
-#        assert is_cid(CIDv1(test_cidv1).encode())
+        assert is_cid(make_cid(test_cidv1).encode())
 
     @pytest.mark.parametrize('test_data', (
         '!',
@@ -126,7 +125,7 @@ class CIDTestCase(object):
 
 
 class MakeCIDTestCase(object):
-    def test_hash(self, test_hash):
+    def test_base_encoded_hash(self, test_hash):
         """ make_cid: make_cid works with base-encoded hash """
         assert make_cid(base58.b58encode(test_hash)) == CIDv0(test_hash)
 
