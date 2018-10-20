@@ -1,6 +1,12 @@
 History
 -------
 
+0.2.1 (2018-10-20)
+==================
+
+* Fix edge cases with multibase and multihash decoding
+* Added hypothesis tests while verifying CIDs
+
 0.1.5 (2018-10-12)
 ==================
 
