@@ -254,15 +254,27 @@ def from_bytes(cidbytes):
     :return: a CID object
     :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
     :raises: `ValueError` if the base58-encoded string is not a valid string
+    :raises: `ValueError` if the length of the argument is zero
+    :raises: `ValueError` if the length of decoded CID is invalid
     """
-    if multibase.is_encoded(cidbytes):
+    if len(cidbytes) < 2:
+        raise ValueError('argument length can not be zero')
+
+    # first byte for identity multibase and CIDv0 is 0x00
+    # putting in assumption that multibase for CIDv0 can not be identity
+    # refer: https://github.com/ipld/cid/issues/13#issuecomment-326490275
+    if cidbytes[0] != 0 and multibase.is_encoded(cidbytes):
         # if the bytestream is multibase encoded
         cid = multibase.decode(cidbytes)
+
+        if len(cid) < 2:
+            raise ValueError('cid length is invalid')
+
         data = cid[1:]
         version = int(cid[0])
         codec = multicodec.get_codec(data)
         multihash = multicodec.remove_prefix(data)
-    elif cidbytes[0] in (b'0', b'1'):
+    elif cidbytes[0] in (0, 1):
         # if the bytestream is a CID
         version = cidbytes[0]
         data = cidbytes[1:]

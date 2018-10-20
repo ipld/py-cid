@@ -12,6 +12,9 @@ from multibase.multibase import ENCODINGS
 from hypothesis import given, strategies as st
 
 
+ALLOWED_ENCODINGS = [encoding for encoding in ENCODINGS if encoding.code != b'\x00']
+
+
 @pytest.fixture(scope='session')
 def test_hash():
     data = hashlib.sha256(b'hello world').hexdigest()
@@ -201,7 +204,7 @@ class FromStringTestCase(object):
     def cidv1(self, test_hash):
         return CIDv1('dag-pb', test_hash)
 
-    @pytest.mark.parametrize('codec', ENCODINGS)
+    @pytest.mark.parametrize('codec', ALLOWED_ENCODINGS)
     def test_multibase_encoded_hash(self, cidv1, codec):
         """ from_string: works for multibase-encoded strings """
         assert from_string(cidv1.encode(codec.encoding)) == cidv1
@@ -212,5 +215,16 @@ class FromStringTestCase(object):
 
     def test_invalid_base58_encoded_hash(self):
         with pytest.raises(ValueError) as excinfo:
-            from_string('!')
+            from_string('!!!!')
         assert 'multihash is not a valid base58 encoded multihash' in str(excinfo.value)
+
+    @pytest.mark.parametrize('value', ('', 'a'))
+    def test_invalid_length_zero(self, value):
+        with pytest.raises(ValueError) as excinfo:
+            from_string(value)
+        assert 'argument length can not be zero' in str(excinfo.value)
+
+    def test_invalid_cid_length(self):
+        with pytest.raises(ValueError) as excinfo:
+            from_string('011111111')
+        assert 'cid length is invalid' in str(excinfo.value)
