@@ -2,12 +2,17 @@ import hashlib
 import multihash
 import pytest
 import base58
+import string
 from morphys import ensure_unicode
 
 import multibase
 import multicodec
 from cid import CIDv0, CIDv1, make_cid, is_cid, from_string
 from multibase.multibase import ENCODINGS
+from hypothesis import given, strategies as st
+
+
+ALLOWED_ENCODINGS = [encoding for encoding in ENCODINGS if encoding.code != b'\x00']
 
 
 @pytest.fixture(scope='session')
@@ -103,6 +108,10 @@ class CIDTestCase(object):
         assert is_cid(test_cidv0)
         assert is_cid(make_cid(test_cidv0).encode())
 
+    @given(hash=st.text(string.ascii_letters + string.digits))
+    def test_make_cid(self, hash):
+        is_cid(hash)
+
     @pytest.mark.parametrize('test_cidv1', (
         'bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi',
         'bafkreigh2akiscaildcqabsyg3dfr6chu3fgpregiymsck7e7aqa4s52zy',
@@ -195,10 +204,14 @@ class FromStringTestCase(object):
     def cidv1(self, test_hash):
         return CIDv1('dag-pb', test_hash)
 
-    @pytest.mark.parametrize('codec', ENCODINGS)
+    @pytest.mark.parametrize('codec', ALLOWED_ENCODINGS)
     def test_multibase_encoded_hash(self, cidv1, codec):
         """ from_string: works for multibase-encoded strings """
         assert from_string(cidv1.encode(codec.encoding)) == cidv1
+
+    def test_cid_raw(self, cidv0, cidv1):
+        """ from_string: works for raw cidbytes """
+        assert from_string(cidv1.buffer) == cidv1
 
     def test_base58_encoded_hash(self, cidv0):
         """ from_string: works for base58-encoded strings """
@@ -206,5 +219,16 @@ class FromStringTestCase(object):
 
     def test_invalid_base58_encoded_hash(self):
         with pytest.raises(ValueError) as excinfo:
-            from_string('!')
+            from_string('!!!!')
         assert 'multihash is not a valid base58 encoded multihash' in str(excinfo.value)
+
+    @pytest.mark.parametrize('value', ('', 'a'))
+    def test_invalid_length_zero(self, value):
+        with pytest.raises(ValueError) as excinfo:
+            from_string(value)
+        assert 'argument length can not be zero' in str(excinfo.value)
+
+    def test_invalid_cid_length(self):
+        with pytest.raises(ValueError) as excinfo:
+            from_string('011111111')
+        assert 'cid length is invalid' in str(excinfo.value)
