@@ -209,6 +209,10 @@ class FromStringTestCase(object):
         """ from_string: works for multibase-encoded strings """
         assert from_string(cidv1.encode(codec.encoding)) == cidv1
 
+    def test_cid_raw(self, cidv0, cidv1):
+        """ from_string: works for raw cidbytes """
+        assert from_string(cidv1.buffer) == cidv1
+
     def test_base58_encoded_hash(self, cidv0):
         """ from_string: works for base58-encoded strings """
         assert from_string(cidv0.encode()) == cidv0
