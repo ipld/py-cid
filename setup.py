@@ -14,7 +14,7 @@ with open('HISTORY.rst') as history_file:
 requirements = [
     'base58>=1.0.2,<2.0',
     'py-multibase>=1.0.0,<2.0.0',
-    'py-multicodec<0.2.0',
+    'py-multicodec<0.3.0',
     'morphys>=1.0,<2.0',
     'py-multihash>=0.2.0,<1.0.0',
 ]
