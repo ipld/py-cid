@@ -30,7 +30,7 @@ test_requirements = [
 
 setup(
     name='py-cid',
-    version='0.2.1',
+    version='0.3.0',
     description="Self-describing content-addressed identifiers for distributed systems",
     long_description=readme + '\n\n' + history,
     author="Dhruv Baldawa",
