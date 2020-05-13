@@ -61,6 +61,12 @@ class CIDv1TestCase(object):
     def test_init_invalid_multihash(self, raw_multihash):
         with pytest.raises(ValueError):
             CIDv1(self.TEST_CODEC, raw_multihash)
+            CIDv1(self.TEST_CODEC, multibase.encode("base58", raw_multihash).decode())
+
+    @given(string_multihash=st.text().filter(lambda x: not multibase.is_encoded(x)))
+    def test_init_invalid_base_multihash(self, string_multihash):
+        with pytest.raises(ValueError):
+            CIDv1(self.TEST_CODEC, string_multihash)
 
     def test_buffer(self, cid):
         """ .buffer: buffer is computed properly """
