@@ -37,9 +37,8 @@ Working with CIDv1
     >>> make_cid('zdj7WhuEjrB52m1BisYCtmjH1hSKa7yZ3jEZ9JcXaFRD51wVz')
     CIDv1(version=1, codec=dag-pb, multihash=b"\x12 \xb9M'..")
 
-    >>> # or you can provide a multihash directly
-    >>> cid = CIDv1('dag-pb', '<multihash>')
-    CIDv1(version=1, codec=dag-pb, multihash=b'<multihash>')
+    >>> # or you can provide a multibase-encoded multihash directly
+    >>> cid = CIDv1('dag-pb', '<multibase-encoded multihash>')
 
     >>> # you can encode the CID to get its string form
     >>> cid.encode()

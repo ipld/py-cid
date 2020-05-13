@@ -26,6 +26,8 @@ class BaseCID(object):
         self._version = version
         self._codec = codec
         self._multihash = ensure_bytes(multihash)
+        if not mh.is_valid(self._multihash):
+            raise ValueError("Invalid multihash value: {}".format(multihash))
 
     @property
     def version(self):
@@ -74,8 +76,13 @@ class CIDv0(BaseCID):
 
     def __init__(self, multihash):
         """
-        :param bytes multihash: multihash for the CID
+        :param multihash: multihash for the CID
         """
+        if isinstance(multihash, str):
+            try:
+                multihash = base58.b58decode(multihash)
+            except ValueError:
+                raise ValueError("Invalid multihash string: {}. Must be Base58 (non-multibase) encoded".format(multihash))
         super(CIDv0, self).__init__(0, self.CODEC, multihash)
 
     @property
@@ -111,6 +118,11 @@ class CIDv1(BaseCID):
     """ CID version 1 object """
 
     def __init__(self, codec, multihash):
+        if isinstance(multihash, str):
+            try:
+                multihash = multibase.decode(multihash)
+            except ValueError:
+                raise ValueError("Invalid multihash string: {}. Must be Multibase encoded".format(multihash))
         super(CIDv1, self).__init__(1, codec, multihash)
 
     @property

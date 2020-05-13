@@ -57,6 +57,11 @@ class CIDv1TestCase(object):
         assert cid.codec == self.TEST_CODEC
         assert cid.multihash == test_hash
 
+    @given(raw_multihash=st.binary().filter(lambda x: not multihash.is_valid(x)))
+    def test_init_invalid_multihash(self, raw_multihash):
+        with pytest.raises(ValueError):
+            CIDv1(self.TEST_CODEC, raw_multihash)
+
     def test_buffer(self, cid):
         """ .buffer: buffer is computed properly """
         buffer = cid.buffer
@@ -83,8 +88,8 @@ class CIDTestCase(object):
 
     def test_cidv0_neq(self):
         """ check for inequality for CIDv0 for different hashes """
-        assert CIDv0(b'QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n') != \
-            CIDv0(b'QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1o')
+        assert CIDv0('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n') != \
+            CIDv0('QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1o')
 
     def test_cidv0_eq_cidv1(self, test_hash):
         """ check for equality between converted v0 to v1 """
@@ -94,7 +99,7 @@ class CIDTestCase(object):
         """ check for equality between converted v1 to v0 """
         assert CIDv1(CIDv0.CODEC, test_hash).to_v0() == CIDv0(test_hash)
 
-    def test_cidv1_to_cidv0_no_dag_pb(self):
+    def test_cidv1_to_cidv0_no_dag_pb(self, test_hash):
         """ converting non dag-pb CIDv1 should raise an exception """
         with pytest.raises(ValueError) as excinfo:
             CIDv1('base2', test_hash).to_v0()
