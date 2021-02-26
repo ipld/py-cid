@@ -12,11 +12,11 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
 requirements = [
-    'base58>=1.0.2,<2.0',
-    'py-multibase>=1.0.0,<2.0.0',
-    'py-multicodec<0.3.0',
-    'morphys>=1.0,<2.0',
-    'py-multihash>=0.2.0,<1.0.0',
+    'base58',
+    'py-multibase',
+    'py-multicodec',
+    'morphys',
+    'py-multihash',
 ]
 
 setup_requirements = [
@@ -30,7 +30,7 @@ test_requirements = [
 
 setup(
     name='py-cid',
-    version='0.3.0',
+    version='0.4.0',
     description="Self-describing content-addressed identifiers for distributed systems",
     long_description=readme + '\n\n' + history,
     author="Dhruv Baldawa",
