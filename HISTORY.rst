@@ -1,6 +1,12 @@
 History
 -------
 
+0.4.0 (forked master)
+=====================
+
+* remove crazy version range limits for dependencies which cause major headaches
+  for downstream projects with multiple confluent indirect dependencies on this library
+
 0.2.1 (2018-10-20)
 ==================
 
