@@ -123,7 +123,7 @@ class CIDv1(BaseCID):
         """
         return b''.join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
 
-    def encode(self, encoding='base58btc'):
+    def encode(self, encoding='base32'):
         """
         Encoded version of the raw representation
 
