@@ -1,3 +1,15 @@
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
+2022-09-15:
+
+This repo is not maintained.
+
+If someone would like to fork it and support it, IPLD stewards are happy to point to a supported fork.
+Please open an issue in ipld/ipld requesting this of ask in #ipld in IPFS Discod, Matrix, or FIL Slack.
+
+⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
+
+
 CID (Content IDentifier)
 ------------------------
 
