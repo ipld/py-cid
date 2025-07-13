@@ -63,6 +63,7 @@ dev = [
     "wheel",
     "bump2version>=1.0.0",
     "codecov>=2.0.0",
+    "build",
 ]
 
 [tool.setuptools.packages.find]
