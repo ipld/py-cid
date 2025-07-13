@@ -74,16 +74,18 @@ servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst;*.py' -c '$(MAKE) -C docs html' -R -D .
 
 verify_description:
-	python setup.py --long-description | rst2html.py > /dev/null
+	python -c "import setuptools; exec(open('setup.py').read())" --long-description | rst2html.py > /dev/null
 
 release: clean verify_description ## package and upload a release
-	python setup.py sdist upload
-	python setup.py bdist_wheel upload
+	python -m build
+	twine upload dist/*
 
 dist: clean ## builds source and wheel package
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python -m build
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+	pip install .
+
+install-dev: clean ## install the package in development mode
+	pip install -e ".[dev]"

@@ -1,0 +1,121 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-cid"
+version = "0.3.0"
+description = "Self-describing content-addressed identifiers for distributed systems"
+readme = "README.rst"
+license = "MIT"
+authors = [
+    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
+]
+maintainers = [
+    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
+]
+keywords = ["cid", "ipfs", "ipld", "content-addressed", "multihash", "multibase", "multicodec"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.3"
+dependencies = [
+    "base58>=1.0.2,<2.0",
+    "py-multibase>=1.0.0,<2.0.0",
+    "py-multicodec<0.3.0",
+    "morphys>=1.0,<2.0",
+    "py-multihash>=0.2.0,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ipld/py-cid"
+Documentation = "https://py-cid.readthedocs.io"
+Repository = "https://github.com/ipld/py-cid"
+"Bug Tracker" = "https://github.com/ipld/py-cid/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-runner>=6.0.0",
+    "hypothesis>=6.0.0",
+    "flake8>=6.0.0",
+    "coverage>=7.0.0",
+    "sphinx>=7.0.0",
+    "watchdog[watchmedo]>=3.0.0",
+    "tox>=4.0.0",
+    "twine>=4.0.0",
+    "wheel",
+    "bump2version>=1.0.0",
+    "codecov>=2.0.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["cid*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.rst", "*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--cov=cid/",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-branch",
+]
+
+[tool.coverage.run]
+source = ["cid"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.flake8]
+max-line-length = 100
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    "venv",
+    ".venv",
+]
+ignore = [
+    "E203",  # whitespace before ':'
+    "W503",  # line break before binary operator
+] 
