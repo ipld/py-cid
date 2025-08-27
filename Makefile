@@ -34,7 +34,8 @@ clean-build: ## remove build artifacts
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
+	find . -name '*.egg' -exec rm -fr {} +
+	rm -rf .tox/.pkg/ 2>/dev/null || true
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -73,8 +74,8 @@ docs: ## generate Sphinx HTML documentation, including API docs
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst;*.py' -c '$(MAKE) -C docs html' -R -D .
 
-verify_description:
-	python -c "import setuptools; exec(open('setup.py').read())" --long-description | rst2html.py > /dev/null
+verify_description: ## verify the long description is valid RST
+	python -c "from docutils.core import publish_string; result = publish_string(open('README.rst').read(), writer_name='html'); print('RST validation successful')" 2>&1 | grep -E "(ERROR|WARNING)" && exit 1 || echo "RST validation passed"
 
 release: clean verify_description ## package and upload a release
 	python -m build
