@@ -1,0 +1,178 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-cid"
+version = "0.3.0"
+description = "Self-describing content-addressed identifiers for distributed systems"
+readme = "README.rst"
+authors = [{ name = "Dhruv Baldawa", email = "dhruv@dhruvb.com" }]
+maintainers = [
+    { name = "pacrob", email = "pacrob-py-libp2p@protonmail.com" },
+    { name = "acul71" },
+    { name = "Manu Sheel Gupta", email = "manu@seeta.in" },
+]
+license = { text = "MIT License" }
+keywords = ["cid"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.10, <4.0"
+dependencies = [
+    'base58>=1.0.2,<2.0',
+    'py-multibase>=1.0.0,<2.0.0',
+    'py-multicodec<0.3.0',
+    'morphys>=1.0,<2.0',
+    'py-multihash>=0.2.0,<1.0.0',
+]
+
+[project.urls]
+Homepage = "https://github.com/ipld/py-cid"
+
+[project.optional-dependencies]
+dev = [
+    "Sphinx>=5.0.0",
+    "build>=0.9.0",
+    "bump_my_version>=1.2.0",
+    "coverage>=6.5.0",
+    "hypothesis>=6.125.0",
+    "pre-commit",
+    "pyright",
+    "pytest",
+    "pytest-cov",
+    "pytest-runner",
+    "pytest-trio>=0.5.2",
+    "ruff",
+    "towncrier>=24,<25",
+    "tox>=4.10.0",
+    "twine",
+    "watchdog>=3.0.0",
+    "wheel>=0.31.0",
+]
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cid*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.towncrier]
+# Read https://github.com/ipld/py-cid/blob/master/newsfragments/README.md for instructions
+directory = "newsfragments"
+filename = "HISTORY.rst"
+issue_format = "`#{issue} <https://github.com/ipld/py-cid/issues/{issue}>`__"
+package = "py-cid"
+title_format = "py-cid v{version} ({project_date})"
+underlines = ["-", "~", "^"]
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bugfixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecation"
+name = "Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "docs"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "internal"
+name = "Internal Changes - for py-cid Contributors"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "Miscellaneous Changes"
+showcontent = false
+
+[[tool.towncrier.type]]
+directory = "performance"
+name = "Performance Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals"
+showcontent = true
+
+[tool.bumpversion]
+current_version = "0.3.0"
+parse = """
+    (?P<major>\\d+)
+    \\.(?P<minor>\\d+)
+    \\.(?P<patch>\\d+)
+		(-
+			(?P<stage>[^.]*)
+			\\.(?P<devnum>\\d+)
+		)?
+"""
+serialize = [
+	"{major}.{minor}.{patch}-{stage}.{devnum}",
+	"{major}.{minor}.{patch}",
+]
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = false
+tag = true
+sign_tags = true
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+message = "Bump version: {current_version} → {new_version}"
+
+[tool.bumpversion.parts.stage]
+optional_value = "stable"
+first_value = "stable"
+values = [
+	"alpha",
+	"beta",
+	"stable",
+]
+
+[tool.bumpversion.part.devnum]
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = "version = \"{current_version}\""
+replace = "version = \"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = "current_version = \"{current_version}\""
+replace = "current_version = \"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "cid/__init__.py"
+search = "__version__ = \"{current_version}\""
+replace = "__version__ = \"{new_version}\""

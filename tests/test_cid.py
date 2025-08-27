@@ -21,7 +21,7 @@ def test_hash():
     return multihash.encode(bytes.fromhex(data), 'sha2-256')
 
 
-class CIDv0TestCase(object):
+class TestCIDv0:
     @pytest.fixture()
     def cid(self, test_hash):
         return CIDv0(test_hash)
@@ -44,7 +44,7 @@ class CIDv0TestCase(object):
         assert str(cid) == ensure_unicode(cid.encode())
 
 
-class CIDv1TestCase(object):
+class TestCIDv1:
     TEST_CODEC = 'dag-pb'
 
     @pytest.fixture()
@@ -76,7 +76,7 @@ class CIDv1TestCase(object):
         assert str(cid) == ensure_unicode(cid.encode())
 
 
-class CIDTestCase(object):
+class TestCID:
     def test_cidv0_eq_cidv0(self, test_hash):
         """ check for equality for CIDv0 for same hash """
         assert CIDv0(test_hash) == make_cid(CIDv0(test_hash).encode())
@@ -94,7 +94,7 @@ class CIDTestCase(object):
         """ check for equality between converted v1 to v0 """
         assert CIDv1(CIDv0.CODEC, test_hash).to_v0() == CIDv0(test_hash)
 
-    def test_cidv1_to_cidv0_no_dag_pb(self):
+    def test_cidv1_to_cidv0_no_dag_pb(self, test_hash):
         """ converting non dag-pb CIDv1 should raise an exception """
         with pytest.raises(ValueError) as excinfo:
             CIDv1('base2', test_hash).to_v0()
@@ -133,7 +133,7 @@ class CIDTestCase(object):
         assert not is_cid(test_data)
 
 
-class MakeCIDTestCase(object):
+class TestMakeCID:
     def test_base_encoded_hash(self, test_hash):
         """ make_cid: make_cid works with base-encoded hash """
         assert make_cid(base58.b58encode(test_hash)) == CIDv0(test_hash)
@@ -195,7 +195,7 @@ class MakeCIDTestCase(object):
         assert 'invalid number of arguments' in str(excinfo.value)
 
 
-class FromStringTestCase(object):
+class TestFromString:
     @pytest.fixture()
     def cidv0(self, test_hash):
         return CIDv0(test_hash)
