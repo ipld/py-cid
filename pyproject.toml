@@ -7,12 +7,14 @@ name = "py-cid"
 version = "0.3.0"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
-license = "MIT"
+license = {text = "MIT"}
 authors = [
     {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
 ]
 maintainers = [
-    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
+    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"},
+    {name = "acul71"},
+    {name = "pacrob", email = "pacrob-py-libp2p@protonmail.com"}
 ]
 keywords = ["cid", "ipfs", "ipld", "content-addressed", "multihash", "multibase", "multicodec"]
 classifiers = [
@@ -61,13 +63,22 @@ dev = [
     "tox>=4.0.0",
     "twine>=4.0.0",
     "wheel",
-    "bump2version>=1.0.0",
+    "bump_my_version>=0.19.0",
     "codecov>=2.0.0",
     "build",
     "cryptography>=44.0.1",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.0.0",
+    "towncrier>=24,<25",
 ]
 
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
 [tool.setuptools.packages.find]
+where = ["."]
 include = ["cid*"]
 
 [tool.setuptools.package-data]
@@ -120,4 +131,104 @@ exclude = [
 ignore = [
     "E203",  # whitespace before ':'
     "W503",  # line break before binary operator
-] 
+]
+
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "ARG", "PIE", "T20", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "TCH", "ARG", "PIE", "SIM", "LOG", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "UP", "W", "YTT", "S", "BLE", "FIX", "AIR", "PERF", "FURB", "LOG"]
+ignore = [
+    "E203",  # whitespace before ':'
+    "W503",  # line break before binary operator
+    "E501",  # line too long (handled by line-length)
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
+"tests/**/*" = ["S101", "PLR2004"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "multihash.*",
+    "multibase.*",
+    "multicodec.*",
+    "morphys.*",
+    "base58.*",
+]
+ignore_missing_imports = true
+
+[tool.towncrier]
+# Read https://github.com/ipld/py-cid/blob/master/newsfragments/README.md for instructions
+directory = "newsfragments"
+filename = "HISTORY.rst"
+issue_format = "`#{issue} <https://github.com/ipld/py-cid/issues/{issue}>`__"
+package = "py-cid"
+title_format = "py-cid v{version} ({project_date})"
+underlines = ["-", "~", "^"]
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bugfixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecation"
+name = "Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "docs"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "internal"
+name = "Internal Changes - for py-cid Contributors"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "Miscellaneous Changes"
+showcontent = false
+
+[[tool.towncrier.type]]
+directory = "performance"
+name = "Performance Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals"
+showcontent = true
+
+[tool.bump_my_version]
+current_version = "0.3.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit = true
+tag = true
+push = false

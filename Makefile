@@ -51,6 +51,9 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	flake8 cid tests
 
+typecheck: ## run type checking with mypy and pyrefly
+	pre-commit run mypy-local --all-files && pre-commit run pyrefly-local --all-files
+
 test: ## run tests quickly with the default Python
 	py.test --cov=cid/ --cov-report=html --cov-report=term-missing --cov-branch
 
