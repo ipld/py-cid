@@ -1,3 +1,4 @@
+import hashlib
 import multihash
 import pytest
 import base58
@@ -20,7 +21,7 @@ def test_hash():
     return multihash.digest(data, 'sha2-256').encode()
 
 
-class TestCIDv0(object):
+class TestCIDv0:
     @pytest.fixture()
     def cid(self, test_hash):
         return CIDv0(test_hash)
@@ -43,7 +44,7 @@ class TestCIDv0(object):
         assert str(cid) == ensure_unicode(cid.encode())
 
 
-class TestCIDv1(object):
+class TestCIDv1:
     TEST_CODEC = 'dag-pb'
 
     @pytest.fixture()
@@ -75,7 +76,7 @@ class TestCIDv1(object):
         assert str(cid) == ensure_unicode(cid.encode())
 
 
-class TestCID(object):
+class TestCID:
     def test_cidv0_eq_cidv0(self, test_hash):
         """ check for equality for CIDv0 for same hash """
         assert CIDv0(test_hash) == make_cid(CIDv0(test_hash).encode())
@@ -93,7 +94,7 @@ class TestCID(object):
         """ check for equality between converted v1 to v0 """
         assert CIDv1(CIDv0.CODEC, test_hash).to_v0() == CIDv0(test_hash)
 
-    def test_cidv1_to_cidv0_no_dag_pb(self):
+    def test_cidv1_to_cidv0_no_dag_pb(self, test_hash):
         """ converting non dag-pb CIDv1 should raise an exception """
         with pytest.raises(ValueError) as excinfo:
             CIDv1('base2', test_hash).to_v0()
@@ -132,7 +133,7 @@ class TestCID(object):
         assert not is_cid(test_data)
 
 
-class TestMakeCID(object):
+class TestMakeCID:
     def test_base_encoded_hash(self, test_hash):
         """ make_cid: make_cid works with base-encoded hash """
         assert make_cid(base58.b58encode(test_hash)) == CIDv0(test_hash)
@@ -194,7 +195,7 @@ class TestMakeCID(object):
         assert 'invalid number of arguments' in str(excinfo.value)
 
 
-class TestFromString(object):
+class TestFromString:
     @pytest.fixture()
     def cidv0(self, test_hash):
         return CIDv0(test_hash)
@@ -205,25 +206,29 @@ class TestFromString(object):
 
     @pytest.mark.parametrize('codec', ALLOWED_ENCODINGS)
     def test_multibase_encoded_hash(self, cidv1, codec):
-        cidstr = cidv1.encode(codec.encoding)
-        assert from_string(cidstr) == cidv1
+        """ from_string: works for multibase-encoded strings """
+        assert from_string(cidv1.encode(codec.encoding)) == cidv1
 
     def test_cid_raw(self, cidv0, cidv1):
-        assert from_string(cidv0.encode()) == cidv0
-        assert from_string(cidv1.encode()) == cidv1
+        """ from_string: works for raw cidbytes """
+        assert from_string(cidv1.buffer) == cidv1
 
     def test_base58_encoded_hash(self, cidv0):
+        """ from_string: works for base58-encoded strings """
         assert from_string(cidv0.encode()) == cidv0
 
     def test_invalid_base58_encoded_hash(self):
-        with pytest.raises(ValueError):
-            from_string('invalid')
+        with pytest.raises(ValueError) as excinfo:
+            from_string('!!!!')
+        assert 'multihash is not a valid base58 encoded multihash' in str(excinfo.value)
 
     @pytest.mark.parametrize('value', ('', 'a'))
     def test_invalid_length_zero(self, value):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as excinfo:
             from_string(value)
+        assert 'argument length can not be zero' in str(excinfo.value)
 
     def test_invalid_cid_length(self):
-        with pytest.raises(ValueError):
-            from_string(base58.b58encode(b'123'))
+        with pytest.raises(ValueError) as excinfo:
+            from_string('011111111')
+        assert 'cid length is invalid' in str(excinfo.value)
