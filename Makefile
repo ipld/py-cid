@@ -74,6 +74,13 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
+check-docs-ci: ## check documentation for CI
+	rm -f docs/cid.rst
+	rm -f docs/modules.rst
+	sphinx-apidoc -o docs/ cid
+	$(MAKE) -C docs clean
+	$(MAKE) -C docs html
+
 servedocs: docs ## compile the docs watching for changes
 	watchmedo shell-command -p '*.rst;*.py' -c '$(MAKE) -C docs html' -R -D .
 
@@ -93,3 +100,5 @@ install: clean ## install the package to the active Python's site-packages
 
 install-dev: clean ## install the package in development mode
 	pip install -e ".[dev]"
+
+pr: clean lint typecheck test ## run clean, lint, typecheck, and test - everything needed before creating a PR

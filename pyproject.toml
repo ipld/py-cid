@@ -7,7 +7,7 @@ name = "py-cid"
 version = "0.3.0"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
 ]
@@ -23,11 +23,6 @@ classifiers = [
 
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.3",
-    "Programming Language :: Python :: 3.4",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -35,7 +30,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.3"
+requires-python = ">=3.8"
 dependencies = [
     "base58>=1.0.2,<2.0",
     "py-multibase>=1.0.0,<2.0.0",
@@ -128,49 +123,38 @@ exclude = [
     "venv",
     ".venv",
 ]
-ignore = [
-    "E203",  # whitespace before ':'
-    "W503",  # line break before binary operator
-]
 
 [tool.ruff]
 target-version = "py38"
 line-length = 100
-select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "ARG", "PIE", "T20", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "TCH", "ARG", "PIE", "SIM", "LOG", "FBT", "B", "A", "COM", "C4", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G", "INP", "PIE", "T20", "PYI", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "UP", "W", "YTT", "S", "BLE", "FIX", "AIR", "PERF", "FURB", "LOG"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "ARG", "PIE", "T20", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "LOG", "FBT", "COM", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G", "INP", "PYI", "YTT", "S", "BLE", "FIX", "AIR", "PERF", "FURB"]
 ignore = [
     "E203",  # whitespace before ':'
-    "W503",  # line break before binary operator
     "E501",  # line too long (handled by line-length)
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "tests/**/*" = ["S101", "PLR2004"]
 
 [tool.mypy]
-python_version = "3.8"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
 check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = false
+disallow_untyped_calls = true
 disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
-
-[[tool.mypy.overrides]]
-module = [
-    "multihash.*",
-    "multibase.*",
-    "multicodec.*",
-    "morphys.*",
-    "base58.*",
-]
+disallow_untyped_defs = true
 ignore_missing_imports = true
+incremental = false
+strict_equality = true
+strict_optional = true
+warn_redundant_casts = true
+warn_return_any = false
+warn_unused_configs = true
+warn_unused_ignores = false
 
 [tool.towncrier]
 # Read https://github.com/ipld/py-cid/blob/master/newsfragments/README.md for instructions

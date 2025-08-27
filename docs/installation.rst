@@ -101,18 +101,18 @@ Common Issues
 
 **Permission Errors**
     Use a virtual environment to avoid permission issues:
-    
+
     .. code-block:: bash
-    
+
         python -m venv venv
         source venv/bin/activate  # On Windows: venv\Scripts\activate
         pip install -e .
 
 **Build Errors**
     Ensure you have the latest pip and setuptools:
-    
+
     .. code-block:: bash
-    
+
         pip install --upgrade pip setuptools wheel
 
 Virtual Environment
@@ -137,4 +137,4 @@ It's recommended to use a virtual environment for development:
     # Install in development mode with all dependencies
     pip install -e ".[dev]"
 
-This isolates your project dependencies from your system Python installation. 
+This isolates your project dependencies from your system Python installation.

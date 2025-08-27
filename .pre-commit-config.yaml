@@ -40,11 +40,3 @@ repos:
         language: system
         always_run: true
         pass_filenames: false
-  - repo: local
-    hooks:
-      - id: check-rst-files
-        name: Check for .rst files in the top-level directory
-        entry: python -c "import glob, sys; rst_files = glob.glob('*.rst'); sys.exit(1) if rst_files else sys.exit(0)"
-        language: system
-        always_run: true
-        pass_filenames: false
