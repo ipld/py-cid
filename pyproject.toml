@@ -64,6 +64,7 @@ dev = [
     "bump2version>=1.0.0",
     "codecov>=2.0.0",
     "build",
+    "cryptography>=44.0.1",
 ]
 
 [tool.setuptools.packages.find]
