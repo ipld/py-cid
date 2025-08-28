@@ -5,9 +5,6 @@ CID (Content IDentifier)
 .. image:: https://img.shields.io/pypi/v/py-cid.svg
         :target: https://pypi.python.org/pypi/py-cid
 
-.. image:: https://img.shields.io/travis/ipld/py-cid.svg?branch=master
-        :target: https://travis-ci.org/ipld/py-cid?branch=master
-
 .. image:: https://codecov.io/gh/ipld/py-cid/branch/master/graph/badge.svg
         :target: https://codecov.io/gh/ipld/py-cid
 
@@ -62,4 +59,4 @@ Other info
 
 * Free software: MIT license
 * Documentation: https://py-cid.readthedocs.io.
-* Python versions: 3.5, 3.6+
+* Python versions: 3.8+
