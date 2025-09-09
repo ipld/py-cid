@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Optional, Union
 
 import base58
 import multibase
@@ -43,7 +43,7 @@ class BaseCID:
     def buffer(self) -> bytes:
         raise NotImplementedError
 
-    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
+    def encode(self, encoding: Optional[str] = None) -> bytes:  # noqa: ARG002
         raise NotImplementedError
 
     def __repr__(self) -> str:
@@ -90,7 +90,7 @@ class CIDv0(BaseCID):
         """
         return self.multihash
 
-    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
+    def encode(self, encoding: Optional[str] = None) -> bytes:  # noqa: ARG002
         """
         base58-encoded buffer
 
@@ -125,7 +125,7 @@ class CIDv1(BaseCID):
         """
         return b"".join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
 
-    def encode(self, encoding: str | None = "base58btc") -> bytes:
+    def encode(self, encoding: Optional[str] = "base58btc") -> bytes:
         """
         Encoded version of the raw representation
 
