@@ -23,14 +23,12 @@ classifiers = [
 
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 dependencies = [
     "base58>=1.0.2,<2.0",
     "py-multibase>=1.0.0,<2.0.0",

@@ -59,4 +59,4 @@ Other info
 
 * Free software: MIT license
 * Documentation: https://py-cid.readthedocs.io.
-* Python versions: 3.8+
+* Python versions: 3.10+

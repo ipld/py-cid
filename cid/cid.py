@@ -1,5 +1,3 @@
-from typing import Optional, Union
-
 import base58
 import multibase
 import multicodec
@@ -10,7 +8,7 @@ from morphys import ensure_bytes, ensure_unicode
 class BaseCID:
     __hash__ = object.__hash__
 
-    def __init__(self, version: int, codec: str, multihash: Union[str, bytes]) -> None:
+    def __init__(self, version: int, codec: str, multihash: str | bytes) -> None:
         """
         Creates a new CID object. This class should not be used directly, use :py:class:`cid.cid.CIDv0` or
         :py:class:`cid.cid.CIDv1` instead.
@@ -43,7 +41,7 @@ class BaseCID:
     def buffer(self) -> bytes:
         raise NotImplementedError
 
-    def encode(self, encoding: Optional[str] = None) -> bytes:  # noqa: ARG002
+    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
         raise NotImplementedError
 
     def __repr__(self) -> str:
@@ -74,7 +72,7 @@ class CIDv0(BaseCID):
 
     CODEC = "dag-pb"
 
-    def __init__(self, multihash: Union[str, bytes]) -> None:
+    def __init__(self, multihash: str | bytes) -> None:
         """
         :param bytes multihash: multihash for the CID
         """
@@ -90,7 +88,7 @@ class CIDv0(BaseCID):
         """
         return self.multihash
 
-    def encode(self, encoding: Optional[str] = None) -> bytes:  # noqa: ARG002
+    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
         """
         base58-encoded buffer
 
@@ -112,7 +110,7 @@ class CIDv0(BaseCID):
 class CIDv1(BaseCID):
     """CID version 1 object"""
 
-    def __init__(self, codec: str, multihash: Union[str, bytes]) -> None:
+    def __init__(self, codec: str, multihash: str | bytes) -> None:
         super().__init__(1, codec, multihash)
 
     @property
@@ -125,7 +123,7 @@ class CIDv1(BaseCID):
         """
         return b"".join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
 
-    def encode(self, encoding: Optional[str] = "base58btc") -> bytes:
+    def encode(self, encoding: str | None = "base58btc") -> bytes:
         """
         Encoded version of the raw representation
 
@@ -151,7 +149,7 @@ class CIDv1(BaseCID):
         return CIDv0(self.multihash)
 
 
-def make_cid(*args: Union[str, bytes, int]) -> Union[CIDv0, CIDv1]:
+def make_cid(*args: str | bytes | int) -> CIDv0 | CIDv1:
     """
     Creates a :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1` object based on the given parameters
 
@@ -214,7 +212,7 @@ def make_cid(*args: Union[str, bytes, int]) -> Union[CIDv0, CIDv1]:
     raise ValueError(msg)
 
 
-def is_cid(cidstr: Union[str, bytes]) -> bool:
+def is_cid(cidstr: str | bytes) -> bool:
     """
     Checks if a given input string is valid encoded CID or not.
     It takes same input as `cid.make_cid` method with a single argument
