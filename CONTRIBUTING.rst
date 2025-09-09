@@ -57,18 +57,27 @@ If you are proposing a feature:
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up `cid` for local development.
+Ready to contribute? Here's how to set up `py-cid` for local development.
 
-1. Fork the `cid` repo on GitHub.
+1. Fork the `py-cid` repo on GitHub.
 2. Clone your fork locally::
 
     $ git clone git@github.com:your_name_here/py-cid.git
+    $ cd py-cid
 
-3. Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development::
+3. Set up your development environment::
 
-    $ mkvirtualenv py-cid
-    $ cd py-cid/
-    $ python setup.py develop
+    # Create a virtual environment
+    $ python3 -m venv ./venv
+
+    # Activate the virtual environment
+    $ source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+    # Install in development mode with all dependencies
+    $ python3 -m pip install -e ".[dev]"
+
+    # Install pre-commit hooks for code quality
+    $ pre-commit install
 
 4. Create a branch for local development::
 
@@ -76,13 +85,22 @@ Ready to contribute? Here's how to set up `cid` for local development.
 
    Now you can make your changes locally.
 
-5. When you're done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox::
+5. When you're done making changes, check that your changes pass all quality checks::
 
-    $ flake8 cid tests
-    $ python setup.py test or py.test
-    $ tox
+    # Run linting and formatting
+    $ ruff check .
+    $ ruff format .
 
-   To get flake8 and tox, just pip install them into your virtualenv.
+    # Run type checking
+    $ mypy cid/
+
+    # Run tests
+    $ pytest
+
+    # Run all checks (linting, type checking, tests)
+    $ make pr
+
+   The pre-commit hooks will automatically run many of these checks when you commit.
 
 6. Commit your changes and push your branch to GitHub::
 
@@ -101,13 +119,58 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 3.4, 3.5 and 3.6. Check
-   https://travis-ci.org/ipld/py-cid/pull_requests
-   and make sure that the tests pass for all supported Python versions.
+3. The pull request should work for Python 3.8+.
+   Check the GitHub Actions CI and make sure that the tests pass for all supported Python versions.
+4. All code should pass the pre-commit hooks (linting, formatting, type checking).
+5. Use the `make pr` command to run all checks before submitting.
+
+Development Tools
+-----------------
+
+The project uses modern development tools for code quality and testing:
+
+**Code Quality:**
+- `ruff` - Fast Python linter and formatter
+- `mypy` - Static type checking
+- `pre-commit` - Git hooks for automated checks
+
+**Testing:**
+- `pytest` - Test framework
+- `pytest-cov` - Coverage reporting
+- `hypothesis` - Property-based testing
+- `tox` - Testing across multiple Python versions
+
+**Documentation:**
+- `sphinx` - Documentation generation
+- `towncrier` - Changelog management
+
+**Makefile Commands:**
+- `make pr` - Run all checks (lint, typecheck, test)
+- `make test` - Run tests with coverage
+- `make lint` - Run linting
+- `make typecheck` - Run type checking
+- `make docs` - Generate documentation
+- `make install-dev` - Install in development mode
 
 Tips
 ----
 
 To run a subset of tests::
 
-$ py.test tests.test_cid
+    $ pytest tests/test_cid.py
+
+To run specific test functions::
+
+    $ pytest tests/test_cid.py::test_specific_function
+
+To run tests with verbose output::
+
+    $ pytest -v
+
+To run linting only::
+
+    $ ruff check .
+
+To format code::
+
+    $ ruff format .

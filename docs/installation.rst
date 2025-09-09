@@ -44,17 +44,26 @@ If you want to install from the source code:
 Development Installation
 ========================
 
-For development work, you'll want to install the package in editable mode so that changes to the source code are immediately reflected:
+For development work, you'll want to install the package in editable mode so that changes to the source code are immediately reflected. It's recommended to use a virtual environment for development:
 
 Development Install
 -------------------
 
-Install the package in development mode with all development dependencies:
+Create a virtual environment and install the package in development mode with all development dependencies:
 
 .. code-block:: bash
 
+    # Create a virtual environment
+    python3 -m venv ./venv
+
+    # Activate the virtual environment
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+
     # Install in editable/development mode with dev dependencies
-    pip install -e ".[dev]"
+    python3 -m pip install -e ".[dev]"
+
+    # Install pre-commit hooks for code quality
+    pre-commit install
 
 Or use the provided Makefile:
 
@@ -104,9 +113,9 @@ Common Issues
 
     .. code-block:: bash
 
-        python -m venv venv
+        python3 -m venv ./venv
         source venv/bin/activate  # On Windows: venv\Scripts\activate
-        pip install -e .
+        python3 -m pip install -e ".[dev]"
 
 **Build Errors**
     Ensure you have the latest pip and setuptools:
@@ -118,12 +127,12 @@ Common Issues
 Virtual Environment
 ===================
 
-It's recommended to use a virtual environment for development:
+It's recommended to use a virtual environment for development to isolate your project dependencies from your system Python installation:
 
 .. code-block:: bash
 
     # Create a virtual environment
-    python -m venv venv
+    python3 -m venv ./venv
 
     # Activate it (Linux/Mac)
     source venv/bin/activate
@@ -131,10 +140,14 @@ It's recommended to use a virtual environment for development:
     # Activate it (Windows)
     venv\Scripts\activate
 
-    # Install in development mode
-    pip install -e .
-
     # Install in development mode with all dependencies
-    pip install -e ".[dev]"
+    python3 -m pip install -e ".[dev]"
 
-This isolates your project dependencies from your system Python installation.
+    # Install pre-commit hooks for code quality
+    pre-commit install
+
+This setup provides:
+- Isolated dependencies from your system Python
+- All development tools (pytest, mypy, ruff, pre-commit, etc.)
+- Automatic code quality checks on commit
+- Editable installation for immediate code changes
