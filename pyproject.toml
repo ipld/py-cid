@@ -69,6 +69,10 @@ dev = [
     "pyrefly>=0.17.1,<0.18.0",
 ]
 
+docs = [
+    "sphinx>=7.0.0",
+]
+
 [tool.setuptools]
 include-package-data = true
 zip-safe = false
