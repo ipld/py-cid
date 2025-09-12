@@ -116,19 +116,49 @@ exclude_lines = [
 
 
 [tool.ruff]
-target-version = "py310"
-line-length = 100
+line-length = 88
+exclude = ["__init__.py", "*_pb2*.py", "*.pyi"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "ARG", "PIE", "T20", "PT", "Q", "RSE", "RET", "SLF", "SLOT", "TCH", "TID", "LOG", "FBT", "COM", "DTZ", "T10", "EM", "EXE", "ISC", "ICN", "G", "INP", "PYI", "YTT", "S", "BLE", "FIX", "AIR", "PERF", "FURB"]
+select = [
+    "F", # Pyflakes
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "I", # isort
+    "D", # pydocstyle
+]
+# Ignores from pydocstyle and any other desired ones
 ignore = [
-    "E203",  # whitespace before ':'
-    "E501",  # line too long (handled by line-length)
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D105",
+    "D106",
+    "D107",
+    "D200",
+    "D203",
+    "D204",
+    "D205",
+    "D212",
+    "D400",
+    "D401",
+    "D412",
+    "D415",
 ]
 
-[tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401"]
-"tests/**/*" = ["S101", "PLR2004"]
+[tool.ruff.lint.isort]
+force-wrap-aliases = true
+combine-as-imports = true
+extra-standard-library = []
+force-sort-within-sections = true
+known-first-party = ["cid", "tests"]
+known-third-party = ["base58", "multibase", "multicodec", "morphys", "pymultihash"]
+force-to-top = ["pytest"]
+
+[tool.ruff.format]
+# Using Ruff's Black-compatible formatter.
+# Options like quote-style = "double" or indent-style = "space" can be set here if needed.
 
 [tool.mypy]
 check_untyped_defs = true
@@ -153,7 +183,7 @@ warn_unused_ignores = false
 directory = "newsfragments"
 filename = "HISTORY.rst"
 issue_format = "`#{issue} <https://github.com/ipld/py-cid/issues/{issue}>`__"
-package = "py-cid"
+package = "cid"
 title_format = "py-cid v{version} ({project_date})"
 underlines = ["-", "~", "^"]
 
@@ -190,7 +220,7 @@ showcontent = true
 [[tool.towncrier.type]]
 directory = "misc"
 name = "Miscellaneous Changes"
-showcontent = false
+showcontent = true
 
 [[tool.towncrier.type]]
 directory = "performance"
