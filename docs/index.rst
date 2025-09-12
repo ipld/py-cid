@@ -11,9 +11,10 @@ Table of contents
 .. toctree::
    :maxdepth: 2
 
-   index
+   installation
    usage
    api_reference
+   modules
    contributing
    authors
    history

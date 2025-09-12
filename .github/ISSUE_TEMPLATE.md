@@ -1,6 +1,6 @@
-* CID (Content IDentifier) version:
-* Python version:
-* Operating System:
+- CID (Content IDentifier) version:
+- Python version:
+- Operating System:
 
 ### Description
 

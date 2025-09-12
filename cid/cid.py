@@ -1,22 +1,17 @@
-# -*- coding: utf-8 -*-
 import base58
-
+from morphys import ensure_bytes, ensure_unicode
 import multibase
-
+import multicodec
 import multihash as mh
 
-from morphys import ensure_bytes, ensure_unicode
 
-import multicodec
-
-
-class BaseCID(object):
+class BaseCID:
     __hash__ = object.__hash__
 
-    def __init__(self, version, codec, multihash):
+    def __init__(self, version: int, codec: str, multihash: str | bytes) -> None:
         """
-        Creates a new CID object. This class should not be used directly, use :py:class:`cid.cid.CIDv0` or
-        :py:class:`cid.cid.CIDv1` instead.
+        Creates a new CID object. This class should not be used directly, use
+        :py:class:`cid.cid.CIDv0` or :py:class:`cid.cid.CIDv1` instead.
 
 
         :param int version: CID version (0 or 1)
@@ -28,58 +23,63 @@ class BaseCID(object):
         self._multihash = ensure_bytes(multihash)
 
     @property
-    def version(self):
-        """ CID version """
+    def version(self) -> int:
+        """CID version"""
         return self._version
 
     @property
-    def codec(self):
-        """ CID codec """
+    def codec(self) -> str:
+        """CID codec"""
         return self._codec
 
     @property
-    def multihash(self):
-        """ CID multihash """
+    def multihash(self) -> bytes:
+        """CID multihash"""
         return self._multihash
 
     @property
-    def buffer(self):
+    def buffer(self) -> bytes:
         raise NotImplementedError
 
-    def encode(self, *args, **kwargs):
+    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
         raise NotImplementedError
 
-    def __repr__(self):
-        def truncate(s, length):
-            return s[:length] + b'..' if len(s) > length else s
+    def __repr__(self) -> str:
+        def truncate(s: bytes, length: int) -> bytes:
+            return s[:length] + b".." if len(s) > length else s
 
         truncate_length = 20
-        return '{class_}(version={version}, codec={codec}, multihash={multihash})'.format(
-            class_=self.__class__.__name__,
-            version=self._version,
-            codec=self._codec,
-            multihash=truncate(self._multihash, truncate_length),
+        return (
+            f"{self.__class__.__name__}(version={self._version}, "
+            f"codec={self._codec}, multihash={truncate(self._multihash, truncate_length)!r})"
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ensure_unicode(self.encode())
 
-    def __eq__(self, other):
-        return (self.version == other.version) and (self.codec == other.codec) and (self.multihash == other.multihash)
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, BaseCID):
+            return False
+        return (
+            (self.version == other.version)
+            and (self.codec == other.codec)
+            and (self.multihash == other.multihash)
+        )
 
 
 class CIDv0(BaseCID):
-    """ CID version 0 object """
-    CODEC = 'dag-pb'
+    """CID version 0 object"""
 
-    def __init__(self, multihash):
+    CODEC = "dag-pb"
+
+    def __init__(self, multihash: str | bytes) -> None:
         """
         :param bytes multihash: multihash for the CID
         """
-        super(CIDv0, self).__init__(0, self.CODEC, multihash)
+        super().__init__(0, self.CODEC, multihash)
 
     @property
-    def buffer(self):
+    def buffer(self) -> bytes:
         """
         The raw representation that will be encoded.
 
@@ -88,7 +88,7 @@ class CIDv0(BaseCID):
         """
         return self.multihash
 
-    def encode(self):
+    def encode(self, encoding: str | None = None) -> bytes:  # noqa: ARG002
         """
         base58-encoded buffer
 
@@ -97,7 +97,7 @@ class CIDv0(BaseCID):
         """
         return ensure_bytes(base58.b58encode(self.buffer))
 
-    def to_v1(self):
+    def to_v1(self) -> "CIDv1":
         """
         Get an equivalent :py:class:`cid.CIDv1` object.
 
@@ -108,33 +108,33 @@ class CIDv0(BaseCID):
 
 
 class CIDv1(BaseCID):
-    """ CID version 1 object """
+    """CID version 1 object"""
 
-    def __init__(self, codec, multihash):
-        super(CIDv1, self).__init__(1, codec, multihash)
+    def __init__(self, codec: str, multihash: str | bytes) -> None:
+        super().__init__(1, codec, multihash)
 
     @property
-    def buffer(self):
+    def buffer(self) -> bytes:
         """
         The raw representation of the CID
 
         :return: raw representation of the CID
         :rtype: bytes
         """
-        return b''.join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
+        return b"".join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
 
-    def encode(self, encoding='base58btc'):
+    def encode(self, encoding: str | None = "base58btc") -> bytes:
         """
         Encoded version of the raw representation
 
-        :param str encoding: the encoding to use to encode the raw representation, should be supported by
-            ``py-multibase``
+        :param str encoding: the encoding to use to encode the raw representation,
+            should be supported by ``py-multibase``
         :return: encoded raw representation with the given encoding
         :rtype: bytes
         """
         return multibase.encode(encoding, self.buffer)
 
-    def to_v0(self):
+    def to_v0(self) -> CIDv0:
         """
         Get an equivalent :py:class:`cid.CIDv0` object.
 
@@ -143,12 +143,13 @@ class CIDv1(BaseCID):
         :raise ValueError: if the codec is not 'dag-pb'
         """
         if self.codec != CIDv0.CODEC:
-            raise ValueError('CIDv1 can only be converted for codec {}'.format(CIDv0.CODEC))
+            msg = f"CIDv1 can only be converted for codec {CIDv0.CODEC}"
+            raise ValueError(msg)
 
         return CIDv0(self.multihash)
 
 
-def make_cid(*args):
+def make_cid(*args: str | bytes | int) -> CIDv0 | CIDv1:
     """
     Creates a :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1` object based on the given parameters
 
@@ -173,7 +174,8 @@ def make_cid(*args):
     :raises ValueError: if the only argument passed is not a ``str`` or a ``byte``
     :raises ValueError: if the string provided is not a valid base58 encoded hash
     :raises ValueError: if 3 arguments are passed and version is not 0 or 1
-    :raises ValueError: if 3 arguments are passed and the ``codec`` is not supported by ``multicodec``
+    :raises ValueError: if 3 arguments are passed and the ``codec`` is not
+        supported by ``multicodec``
     :raises ValueError: if 3 arguments are passed and the ``multihash`` is not ``str`` or ``byte``
     :raises ValueError: if 3 arguments are passed with version 0 and codec is not *dag-pb*
     """
@@ -181,31 +183,37 @@ def make_cid(*args):
         data = args[0]
         if isinstance(data, str):
             return from_string(data)
-        elif isinstance(data, bytes):
+        if isinstance(data, bytes):
             return from_bytes(data)
-        else:
-            raise ValueError('invalid argument passed, expected: str or byte, found: {}'.format(type(data)))
+        msg = f"invalid argument passed, expected: str or byte, found: {type(data)}"
+        raise ValueError(msg)
 
-    elif len(args) == 3:
+    if len(args) == 3:
         version, codec, multihash = args
         if version not in (0, 1):
-            raise ValueError('version should be 0 or 1, {} was provided'.format(version))
+            msg = f"version should be 0 or 1, {version!r} was provided"
+            raise ValueError(msg)
+        if not isinstance(codec, str):
+            msg = "codec must be a string"
+            raise ValueError(msg)
         if not multicodec.is_codec(codec):
-            raise ValueError('invalid codec {} provided, please check'.format(codec))
-        if not (isinstance(multihash, str) or isinstance(multihash, bytes)):
-            raise ValueError('invalid type for multihash provided, should be str or bytes')
+            msg = f"invalid codec {codec!r} provided, please check"
+            raise ValueError(msg)
+        if not isinstance(multihash, (str, bytes)):
+            msg = "invalid type for multihash provided, should be str or bytes"
+            raise ValueError(msg)
 
         if version == 0:
             if codec != CIDv0.CODEC:
-                raise ValueError('codec for version 0 can only be {}, found: {}'.format(CIDv0.CODEC, codec))
+                msg = f"codec for version 0 can only be {CIDv0.CODEC}, found: {codec}"
+                raise ValueError(msg)
             return CIDv0(multihash)
-        else:
-            return CIDv1(codec, multihash)
-    else:
-        raise ValueError('invalid number of arguments, expected 1 or 3')
+        return CIDv1(codec, multihash)
+    msg = "invalid number of arguments, expected 1 or 3"
+    raise ValueError(msg)
 
 
-def is_cid(cidstr):
+def is_cid(cidstr: str | bytes) -> bool:
     """
     Checks if a given input string is valid encoded CID or not.
     It takes same input as `cid.make_cid` method with a single argument
@@ -226,7 +234,7 @@ def is_cid(cidstr):
         return False
 
 
-def from_string(cidstr):
+def from_string(cidstr: str) -> CIDv0 | CIDv1:
     """
     Creates a CID object from a encoded form
 
@@ -238,11 +246,11 @@ def from_string(cidstr):
     :return: a CID object
     :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
     """
-    cidbytes = ensure_bytes(cidstr, 'utf-8')
+    cidbytes = ensure_bytes(cidstr, "utf-8")
     return from_bytes(cidbytes)
 
 
-def from_bytes(cidbytes):
+def from_bytes(cidbytes: bytes) -> CIDv0 | CIDv1:
     """
     Creates a CID object from a encoded form
 
@@ -258,7 +266,8 @@ def from_bytes(cidbytes):
     :raises: `ValueError` if the length of decoded CID is invalid
     """
     if len(cidbytes) < 2:
-        raise ValueError('argument length can not be zero')
+        msg = "argument length can not be zero"
+        raise ValueError(msg)
 
     # first byte for identity multibase and CIDv0 is 0x00
     # putting in assumption that multibase for CIDv0 can not be identity
@@ -268,7 +277,8 @@ def from_bytes(cidbytes):
         cid = multibase.decode(cidbytes)
 
         if len(cid) < 2:
-            raise ValueError('cid length is invalid')
+            msg = "cid length is invalid"
+            raise ValueError(msg)
 
         data = cid[1:]
         version = int(cid[0])
@@ -287,7 +297,8 @@ def from_bytes(cidbytes):
             codec = CIDv0.CODEC
             multihash = base58.b58decode(cidbytes)
         except ValueError:
-            raise ValueError('multihash is not a valid base58 encoded multihash')
+            msg = "multihash is not a valid base58 encoded multihash"
+            raise ValueError(msg) from None
 
     try:
         mh.decode(multihash)

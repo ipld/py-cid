@@ -1,0 +1,240 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "py-cid"
+version = "0.3.0"
+description = "Self-describing content-addressed identifiers for distributed systems"
+readme = "README.rst"
+license = {text = "MIT"}
+authors = [
+    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
+]
+maintainers = [
+    {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"},
+    {name = "acul71"},
+    {name = "pacrob", email = "pacrob-py-libp2p@protonmail.com"}
+]
+keywords = ["cid", "ipfs", "ipld", "content-addressed", "multihash", "multibase", "multicodec"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "base58>=1.0.2,<2.0",
+    "py-multibase>=1.0.0,<2.0.0",
+    "py-multicodec<0.3.0",
+    "morphys>=1.0,<2.0",
+    "pymultihash>=0.8.0,<1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ipld/py-cid"
+Documentation = "https://py-cid.readthedocs.io"
+Repository = "https://github.com/ipld/py-cid"
+"Bug Tracker" = "https://github.com/ipld/py-cid/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-runner>=6.0.0",
+    "hypothesis>=6.0.0",
+    "coverage>=7.0.0",
+    "sphinx>=7.0.0",
+    "watchdog[watchmedo]>=3.0.0",
+    "tox>=4.0.0",
+    "twine>=4.0.0",
+    "wheel",
+    "bump_my_version>=0.19.0",
+    "codecov>=2.0.0",
+    "build",
+    "cryptography>=44.0.1",
+    "ruff>=0.1.0",
+    "mypy>=1.5.0",
+    "pre-commit>=3.0.0",
+    "towncrier>=24,<25",
+    "pyrefly>=0.17.1,<0.18.0",
+]
+
+docs = [
+    "sphinx>=7.0.0",
+]
+
+[tool.setuptools]
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["cid*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.rst", "*.txt"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--cov=cid/",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-branch",
+]
+
+[tool.coverage.run]
+source = ["cid"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+
+[tool.ruff]
+line-length = 100
+exclude = ["__init__.py", "*_pb2*.py", "*.pyi"]
+
+[tool.ruff.lint]
+select = [
+    "F", # Pyflakes
+    "E", # pycodestyle errors
+    "W", # pycodestyle warnings
+    "I", # isort
+    "D", # pydocstyle
+]
+# Ignores from pydocstyle and any other desired ones
+ignore = [
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D105",
+    "D106",
+    "D107",
+    "D200",
+    "D203",
+    "D204",
+    "D205",
+    "D212",
+    "D400",
+    "D401",
+    "D412",
+    "D415",
+]
+
+[tool.ruff.lint.isort]
+force-wrap-aliases = true
+combine-as-imports = true
+extra-standard-library = []
+force-sort-within-sections = true
+known-first-party = ["cid", "tests"]
+known-third-party = ["base58", "multibase", "multicodec", "morphys", "pymultihash"]
+force-to-top = ["pytest"]
+
+[tool.ruff.format]
+# Using Ruff's Black-compatible formatter.
+# Options like quote-style = "double" or indent-style = "space" can be set here if needed.
+
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = false
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+incremental = false
+mypy_path = "stubs"
+strict_equality = true
+strict_optional = true
+warn_redundant_casts = true
+warn_return_any = false
+warn_unused_configs = true
+warn_unused_ignores = false
+
+[tool.towncrier]
+# Read https://github.com/ipld/py-cid/blob/master/newsfragments/README.md for instructions
+directory = "newsfragments"
+filename = "HISTORY.rst"
+issue_format = "`#{issue} <https://github.com/ipld/py-cid/issues/{issue}>`__"
+package = "cid"
+title_format = "py-cid v{version} ({project_date})"
+underlines = ["-", "~", "^"]
+
+[[tool.towncrier.type]]
+directory = "breaking"
+name = "Breaking Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "bugfix"
+name = "Bugfixes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "deprecation"
+name = "Deprecations"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "docs"
+name = "Improved Documentation"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "feature"
+name = "Features"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "internal"
+name = "Internal Changes - for py-cid Contributors"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "misc"
+name = "Miscellaneous Changes"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "performance"
+name = "Performance Improvements"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "removal"
+name = "Removals"
+showcontent = true
+
+[tool.bump_my_version]
+current_version = "0.3.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit = true
+tag = true
+push = false
