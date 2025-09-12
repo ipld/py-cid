@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py-cid"
-version = "0.3.0"
+version = "0.3.1"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
 license = {text = "MIT"}
@@ -233,7 +233,7 @@ name = "Removals"
 showcontent = true
 
 [tool.bumpversion]
-current_version = "0.3.0"
+current_version = "0.3.1"
 parse = """
     (?P<major>\\d+)
     \\.(?P<minor>\\d+)
