@@ -1,12 +1,6 @@
 py-cid v0.3.1 (2025-09-12)
 --------------------------
 
-Internal Changes - for py-cid Contributors
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-- The 0.3.0 release information is now in a newsfragment that can be processed by towncrier --version 0.3.0 to generate the changelog (`#40 <https://github.com/ipld/py-cid/issues/40>`__)
-
-
 Miscellaneous Changes
 ~~~~~~~~~~~~~~~~~~~~~
 
