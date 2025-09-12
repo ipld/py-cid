@@ -49,7 +49,6 @@ dev = [
     "pytest-cov>=4.0.0",
     "pytest-runner>=6.0.0",
     "hypothesis>=6.0.0",
-    "flake8>=6.0.0",
     "coverage>=7.0.0",
     "sphinx>=7.0.0",
     "watchdog[watchmedo]>=3.0.0",
@@ -115,20 +114,9 @@ exclude_lines = [
     "@(abc\\.)?abstractmethod",
 ]
 
-[tool.flake8]
-max-line-length = 100
-exclude = [
-    ".git",
-    "__pycache__",
-    "build",
-    "dist",
-    "*.egg-info",
-    "venv",
-    ".venv",
-]
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py310"
 line-length = 100
 
 [tool.ruff.lint]

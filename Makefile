@@ -48,8 +48,8 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 
-lint: ## check style with flake8
-	flake8 cid tests
+lint: ## check style with ruff
+	ruff check cid tests
 
 typecheck: ## run type checking with mypy and pyrefly
 	pre-commit run mypy-local --all-files && pre-commit run pyrefly-local --all-files
