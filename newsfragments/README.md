@@ -28,14 +28,15 @@ This directory contains news fragments for [towncrier](https://github.com/twiste
 
 ## Generating the changelog
 
-When releasing a new version, run:
+When releasing a new version, first run:
 
 ```bash
-towncrier --version 0.4.0
+make notes bump=<part to bump: `major`, `minor`, or `patch`>
 ```
 
 This will:
 
 - Read all news fragments
 - Generate a structured changelog in `HISTORY.rst`
-- Delete the fragment files
+- Delete the news fragment files
+- Make a git commit noting that release notes were compiled for the new version
