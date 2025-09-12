@@ -15,7 +15,7 @@ Table of contents
    usage
    api_reference
    modules
-   contributing
+   .. contributing
    authors
    history
 
