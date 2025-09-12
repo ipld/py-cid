@@ -1,8 +1,8 @@
 import base58
+from morphys import ensure_bytes, ensure_unicode
 import multibase
 import multicodec
 import multihash as mh
-from morphys import ensure_bytes, ensure_unicode
 
 
 class BaseCID:
@@ -10,8 +10,8 @@ class BaseCID:
 
     def __init__(self, version: int, codec: str, multihash: str | bytes) -> None:
         """
-        Creates a new CID object. This class should not be used directly, use :py:class:`cid.cid.CIDv0` or
-        :py:class:`cid.cid.CIDv1` instead.
+        Creates a new CID object. This class should not be used directly, use
+        :py:class:`cid.cid.CIDv0` or :py:class:`cid.cid.CIDv1` instead.
 
 
         :param int version: CID version (0 or 1)
@@ -127,8 +127,8 @@ class CIDv1(BaseCID):
         """
         Encoded version of the raw representation
 
-        :param str encoding: the encoding to use to encode the raw representation, should be supported by
-            ``py-multibase``
+        :param str encoding: the encoding to use to encode the raw representation,
+            should be supported by ``py-multibase``
         :return: encoded raw representation with the given encoding
         :rtype: bytes
         """
@@ -174,7 +174,8 @@ def make_cid(*args: str | bytes | int) -> CIDv0 | CIDv1:
     :raises ValueError: if the only argument passed is not a ``str`` or a ``byte``
     :raises ValueError: if the string provided is not a valid base58 encoded hash
     :raises ValueError: if 3 arguments are passed and version is not 0 or 1
-    :raises ValueError: if 3 arguments are passed and the ``codec`` is not supported by ``multicodec``
+    :raises ValueError: if 3 arguments are passed and the ``codec`` is not
+        supported by ``multicodec``
     :raises ValueError: if 3 arguments are passed and the ``multihash`` is not ``str`` or ``byte``
     :raises ValueError: if 3 arguments are passed with version 0 and codec is not *dag-pb*
     """

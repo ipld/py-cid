@@ -1,14 +1,16 @@
 import string
 
+import pytest
 import base58
+from hypothesis import (
+    given,
+    strategies as st,
+)
+from morphys import ensure_unicode
 import multibase
+from multibase.multibase import ENCODINGS
 import multicodec
 import multihash
-import pytest
-from hypothesis import given
-from hypothesis import strategies as st
-from morphys import ensure_unicode
-from multibase.multibase import ENCODINGS
 
 from cid import CIDv0, CIDv1, from_string, is_cid, make_cid
 
@@ -78,25 +80,25 @@ class TestCIDv1:
 
 class TestCID:
     def test_cidv0_eq_cidv0(self, test_hash):
-        """check for equality for CIDv0 for same hash"""
+        """Check for equality for CIDv0 for same hash"""
         assert CIDv0(test_hash) == make_cid(CIDv0(test_hash).encode())
 
     def test_cidv0_neq(self):
-        """check for inequality for CIDv0 for different hashes"""
+        """Check for inequality for CIDv0 for different hashes"""
         assert CIDv0(b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n") != CIDv0(
             b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1o",
         )
 
     def test_cidv0_eq_cidv1(self, test_hash):
-        """check for equality between converted v0 to v1"""
+        """Check for equality between converted v0 to v1"""
         assert CIDv0(test_hash).to_v1() == CIDv1(CIDv0.CODEC, test_hash)
 
     def test_cidv1_eq_cidv0(self, test_hash):
-        """check for equality between converted v1 to v0"""
+        """Check for equality between converted v1 to v0"""
         assert CIDv1(CIDv0.CODEC, test_hash).to_v0() == CIDv0(test_hash)
 
     def test_cidv1_to_cidv0_no_dag_pb(self, test_hash):
-        """converting non dag-pb CIDv1 should raise an exception"""
+        """Converting non dag-pb CIDv1 should raise an exception"""
         with pytest.raises(ValueError, match="can only be converted for codec"):
             CIDv1("base2", test_hash).to_v0()
 

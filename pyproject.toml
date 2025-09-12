@@ -116,7 +116,7 @@ exclude_lines = [
 
 
 [tool.ruff]
-line-length = 88
+line-length = 100
 exclude = ["__init__.py", "*_pb2*.py", "*.pyi"]
 
 [tool.ruff.lint]
