@@ -14,7 +14,6 @@ Table of contents
    installation
    usage
    api_reference
-   modules
    contributing
    authors
    history
