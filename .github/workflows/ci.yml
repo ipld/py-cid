@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.10", "3.11", "3.12", "3.13"]
+        python: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         toxenv: [core, lint, wheel]
         include:
-          - python: "3.13"
+          - python: "3.14"
             toxenv: docs
       fail-fast: false
     steps:
@@ -46,7 +46,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
         toxenv: [core, wheel]
       fail-fast: false
     steps:
@@ -62,8 +62,11 @@ jobs:
       - name: Test with tox
         shell: bash
         run: |
-          if [[ "${{ matrix.toxenv }}" == "wheel" ]]; then
+          PY_VERSION="${{ matrix.python-version }}"
+          TOXENV="${{ matrix.toxenv }}"
+          if [[ "${TOXENV}" == "wheel" ]]; then
             python -m tox run -e windows-wheel
           else
-            python -m tox run -e py311-${{ matrix.toxenv }}
+            PY_SHORT="${PY_VERSION/./}"
+            python -m tox run -e py${PY_SHORT}-${TOXENV}
           fi
