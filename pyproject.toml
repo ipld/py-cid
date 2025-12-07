@@ -7,7 +7,7 @@ name = "py-cid"
 version = "0.3.1"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
 ]
