@@ -1,0 +1,1 @@
+Migrate from pymultihash to py-multihash >= 2.0.0 for better maintenance and modern API support.

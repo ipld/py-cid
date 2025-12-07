@@ -7,7 +7,7 @@ name = "py-cid"
 version = "0.3.1"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Dhruv Baldawa", email = "dhruv@dhruvb.com"}
 ]
@@ -35,7 +35,7 @@ dependencies = [
     "py-multibase>=1.0.0,<2.0.0",
     "py-multicodec<0.3.0",
     "morphys>=1.0,<2.0",
-    "pymultihash>=0.8.0,<1.0.0",
+    "py-multihash>=2.0.0",
 ]
 
 [project.urls]
@@ -154,7 +154,7 @@ combine-as-imports = true
 extra-standard-library = []
 force-sort-within-sections = true
 known-first-party = ["cid", "tests"]
-known-third-party = ["base58", "multibase", "multicodec", "morphys", "pymultihash"]
+known-third-party = ["base58", "multibase", "multicodec", "morphys", "multihash"]
 force-to-top = ["pytest"]
 
 [tool.ruff.format]
