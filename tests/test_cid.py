@@ -1,3 +1,4 @@
+import hashlib
 import string
 
 import pytest
@@ -20,7 +21,8 @@ ALLOWED_ENCODINGS = [encoding for encoding in ENCODINGS if encoding.code != b"\x
 @pytest.fixture(scope="session")
 def test_hash():
     data = b"hello world"
-    return multihash.digest(data, "sha2-256").encode()
+    digest = hashlib.sha256(data).digest()
+    return multihash.encode(digest, "sha2-256")
 
 
 class TestCIDv0:
