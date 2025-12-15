@@ -31,7 +31,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "base58>=1.0.2,<2.0",
+    "base58>=2.0,<3.0",
     "py-multibase>=1.0.0,<2.0.0",
     "py-multicodec<0.3.0",
     "morphys>=1.0,<2.0",
