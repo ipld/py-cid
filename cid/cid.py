@@ -1,8 +1,9 @@
-import base58
 from morphys import ensure_bytes, ensure_unicode
 import multibase
 import multicodec
 import multihash as mh
+
+from . import base58
 
 
 class BaseCID:
