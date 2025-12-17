@@ -1,0 +1,1 @@
+Copied ``base58`` code directly into ``py-cid`` to avoid future dependency issues.
