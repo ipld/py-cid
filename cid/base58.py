@@ -1,11 +1,13 @@
-"""Base58 encoding
+"""
+Base58 encoding
 
 Implementations of Base58 and Base58Check encodings that are compatible
 with the bitcoin network.
 
-This file was copied over and added to the bip32 project from David Keijser's https://github.com/keis/base58 (https://pypi.org/project/base58/). This
-package is released under an MIT licensed. The code was copied in this file and left untouched. Here is a copy of the MIT license accompanying the
-code:
+This file was copied over and added to the bip32 project from David Keijser's
+https://github.com/keis/base58 (https://pypi.org/project/base58/). This package is
+released under an MIT licensed. The code was copied in this file and left untouched
+except for formatting. Here is a copy of the MIT license accompanying the code:
     Copyright (c) 2015 David Keijser
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -32,9 +34,9 @@ code:
 # forum post by Gavin Andresen, so direct your praise to him.
 # This module adds shiny packaging and support for python3.
 
+from collections.abc import Mapping
 from functools import lru_cache
 from hashlib import sha256
-from typing import Mapping, Union
 
 # 58 character alphabet used
 BITCOIN_ALPHABET = b"123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
@@ -45,16 +47,14 @@ XRP_ALPHABET = RIPPLE_ALPHABET
 alphabet = BITCOIN_ALPHABET
 
 
-def scrub_input(v: Union[str, bytes]) -> bytes:
+def scrub_input(v: str | bytes) -> bytes:
     if isinstance(v, str):
         v = v.encode("ascii")
 
     return v
 
 
-def b58encode_int(
-    i: int, default_one: bool = True, alphabet: bytes = BITCOIN_ALPHABET
-) -> bytes:
+def b58encode_int(i: int, default_one: bool = True, alphabet: bytes = BITCOIN_ALPHABET) -> bytes:
     """
     Encode an integer using Base58
     """
@@ -68,7 +68,7 @@ def b58encode_int(
     return string
 
 
-def b58encode(v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET) -> bytes:
+def b58encode(v: str | bytes, alphabet: bytes = BITCOIN_ALPHABET) -> bytes:
     """
     Encode a string using Base58
     """
@@ -84,7 +84,7 @@ def b58encode(v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET) -> bytes
     return alphabet[0:1] * (origlen - newlen) + result
 
 
-@lru_cache()
+@lru_cache
 def _get_base58_decode_map(alphabet: bytes, autofix: bool) -> Mapping[int, int]:
     invmap = {char: index for index, char in enumerate(alphabet)}
 
@@ -100,7 +100,7 @@ def _get_base58_decode_map(alphabet: bytes, autofix: bool) -> Mapping[int, int]:
 
 
 def b58decode_int(
-    v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
+    v: str | bytes, alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
 ) -> int:
     """
     Decode a Base58 encoded string as an integer
@@ -117,12 +117,12 @@ def b58decode_int(
         for char in v:
             decimal = decimal * base + map[char]
     except KeyError as e:
-        raise ValueError("Invalid character {!r}".format(chr(e.args[0]))) from None
+        raise ValueError(f"Invalid character {chr(e.args[0])!r}") from None
     return decimal
 
 
 def b58decode(
-    v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
+    v: str | bytes, alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
 ) -> bytes:
     """
     Decode a Base58 encoded string
@@ -139,7 +139,7 @@ def b58decode(
     return acc.to_bytes(origlen - newlen + (acc.bit_length() + 7) // 8, "big")
 
 
-def b58encode_check(v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET) -> bytes:
+def b58encode_check(v: str | bytes, alphabet: bytes = BITCOIN_ALPHABET) -> bytes:
     """
     Encode a string using Base58 with a 4 character checksum
     """
@@ -150,10 +150,9 @@ def b58encode_check(v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET) ->
 
 
 def b58decode_check(
-    v: Union[str, bytes], alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
+    v: str | bytes, alphabet: bytes = BITCOIN_ALPHABET, *, autofix: bool = False
 ) -> bytes:
     """Decode and verify the checksum of a Base58 encoded string"""
-
     result = b58decode(v, alphabet=alphabet, autofix=autofix)
     result, check = result[:-4], result[-4:]
     digest = sha256(sha256(result).digest()).digest()
