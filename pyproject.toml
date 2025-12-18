@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "py-cid"
-version = "0.3.1"
+version = "0.4.0"
 description = "Self-describing content-addressed identifiers for distributed systems"
 readme = "README.rst"
 license = "MIT"
@@ -31,10 +31,10 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "py-multibase>=1.0.0,<2.0.0",
-    "py-multicodec<0.3.0",
+    "py-multibase>=2.0.0,<3.0.0",
+    "py-multicodec>=1.0.0",
     "morphys>=1.0,<2.0",
-    "py-multihash>=2.0.0",
+    "py-multihash>=3.0.0",
 ]
 
 [project.urls]
@@ -153,7 +153,7 @@ combine-as-imports = true
 extra-standard-library = []
 force-sort-within-sections = true
 known-first-party = ["cid", "tests"]
-known-third-party = ["base58", "multibase", "multicodec", "morphys", "multihash"]
+known-third-party = ["multibase", "multicodec", "morphys", "multihash"]
 force-to-top = ["pytest"]
 
 [tool.ruff.format]
@@ -233,7 +233,7 @@ name = "Removals"
 showcontent = true
 
 [tool.bumpversion]
-current_version = "0.3.1"
+current_version = "0.4.0"
 parse = """
     (?P<major>\\d+)
     \\.(?P<minor>\\d+)

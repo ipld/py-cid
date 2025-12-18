@@ -1,0 +1,2 @@
+Removed local cid/base58.py module as base58 functionality is now provided by py-multicodec>=1.0.0.
+

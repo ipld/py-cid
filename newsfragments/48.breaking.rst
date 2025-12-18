@@ -1,0 +1,2 @@
+Updated minimum required versions for dependencies: py-multibase>=2.0.0, py-multicodec>=1.0.0, and py-multihash>=3.0.0. Users must update their dependencies accordingly.
+

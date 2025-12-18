@@ -2,7 +2,6 @@ import hashlib
 import string
 
 import pytest
-import base58
 from hypothesis import (
     given,
     strategies as st,
@@ -11,6 +10,7 @@ from morphys import ensure_unicode
 import multibase
 from multibase.multibase import ENCODINGS
 import multicodec
+from multicodec import b58encode
 import multihash
 
 from cid import CIDv0, CIDv1, from_string, is_cid, make_cid
@@ -154,7 +154,7 @@ class TestCID:
 class TestMakeCID:
     def test_base_encoded_hash(self, test_hash):
         """make_cid: make_cid works with base-encoded hash"""
-        assert make_cid(base58.b58encode(test_hash)) == CIDv0(test_hash)
+        assert make_cid(b58encode(test_hash)) == CIDv0(test_hash)
 
     def test_multibase_hash(self, test_hash):
         """make_cid: make_cid works with multibase-encoded hash"""
