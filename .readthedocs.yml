@@ -5,6 +5,7 @@ build:
   tools:
     python: "3.10"
   commands:
+    - pip install sphinx
     - sphinx-apidoc -o docs/ --separate --no-toc -f cid
 
 sphinx:
