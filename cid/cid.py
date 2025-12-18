@@ -3,7 +3,7 @@ from typing import cast
 from morphys import ensure_bytes, ensure_unicode
 import multibase
 import multicodec
-from multicodec import b58decode, b58encode
+import base58
 import multihash as mh
 
 
@@ -97,7 +97,7 @@ class CIDv0(BaseCID):
         :return: encoded representation or CID
         :rtype: bytes
         """
-        return ensure_bytes(b58encode(self.buffer))
+        return ensure_bytes(base58.b58encode(self.buffer))
 
     def to_v1(self) -> "CIDv1":
         """
@@ -297,7 +297,7 @@ def from_bytes(cidbytes: bytes) -> CIDv0 | CIDv1:
         try:
             version = 0
             codec = CIDv0.CODEC
-            multihash = b58decode(cidbytes)
+            multihash = base58.b58decode(cidbytes)
         except ValueError:
             msg = "multihash is not a valid base58 encoded multihash"
             raise ValueError(msg) from None

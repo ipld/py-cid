@@ -31,6 +31,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "base58>=1.0.2,<2.0",
     "py-multibase>=1.0.0",
     "py-multicodec>=1.0.0",
     "morphys>=1.0,<2.0",
@@ -149,7 +150,7 @@ combine-as-imports = true
 extra-standard-library = []
 force-sort-within-sections = true
 known-first-party = ["cid", "tests"]
-known-third-party = ["multibase", "multicodec", "morphys", "multihash"]
+known-third-party = ["base58", "multibase", "multicodec", "morphys", "multihash"]
 force-to-top = ["pytest"]
 
 [tool.ruff.format]
