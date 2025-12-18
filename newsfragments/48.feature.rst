@@ -1,1 +1,0 @@
-Migrated from local base58 module to py-multicodec's base58 functionality (b58encode/b58decode) for better maintenance and consistency with the multiformats ecosystem.
