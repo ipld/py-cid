@@ -1,2 +1,1 @@
 Update license format in pyproject.toml from deprecated TOML table to SPDX string format to comply with setuptools>=77.0.0 requirements.
-
