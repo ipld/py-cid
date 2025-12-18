@@ -1,9 +1,9 @@
 from typing import cast
 
+import base58
 from morphys import ensure_bytes, ensure_unicode
 import multibase
 import multicodec
-import base58
 import multihash as mh
 
 

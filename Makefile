@@ -74,7 +74,8 @@ coverage: ## check code coverage quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/cid.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ cid
+	sphinx-apidoc -o docs/ --separate cid
+	rm -f docs/modules.rst
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
@@ -82,7 +83,8 @@ docs: ## generate Sphinx HTML documentation, including API docs
 check-docs-ci: ## check documentation for CI
 	rm -f docs/cid.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ cid
+	sphinx-apidoc -o docs/ --separate cid
+	rm -f docs/modules.rst
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 
