@@ -2,7 +2,6 @@ import hashlib
 import string
 
 import pytest
-import base58
 from hypothesis import (
     given,
     strategies as st,
@@ -13,7 +12,7 @@ from multibase.multibase import ENCODINGS
 import multicodec
 import multihash
 
-from cid import CIDv0, CIDv1, from_string, is_cid, make_cid
+from cid import CIDv0, CIDv1, base58, from_string, is_cid, make_cid
 
 ALLOWED_ENCODINGS = [encoding for encoding in ENCODINGS if encoding.code != b"\x00"]
 
