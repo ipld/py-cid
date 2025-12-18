@@ -31,7 +31,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "py-multibase>=2.0.0,<3.0.0",
+    "py-multibase>=1.0.0",
     "py-multicodec>=1.0.0",
     "morphys>=1.0,<2.0",
     "py-multihash>=3.0.0",
@@ -64,10 +64,6 @@ dev = [
     "pre-commit>=3.0.0",
     "towncrier>=24,<25",
     "pyrefly>=0.17.1,<0.18.0",
-]
-
-docs = [
-    "sphinx>=7.0.0",
 ]
 
 [tool.setuptools]
