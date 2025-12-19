@@ -5,8 +5,8 @@ build:
   tools:
     python: "3.10"
   commands:
-    - pip install sphinx
-    - sphinx-apidoc -o docs/ --separate --no-toc -f cid
+    - rm -f docs/cid.rst docs/modules.rst
+    - python -m sphinx.ext.apidoc -o docs/ cid
 
 sphinx:
   configuration: docs/conf.py
