@@ -3,6 +3,23 @@ History
 
 .. towncrier release notes start
 
+py-cid v0.4.0 (2025-12-19)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Add Python 3.14 to the supported and tested interpreter list across tox and CI. (`#45 <https://github.com/ipld/py-cid/issues/45>`__)
+- Migrate from pymultihash to py-multihash >= 2.0.0 for better maintenance and modern API support. (`#47 <https://github.com/ipld/py-cid/issues/47>`__)
+
+
+Internal Changes - for py-cid Contributors
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Update license format in pyproject.toml from deprecated TOML table to SPDX string format to comply with setuptools>=77.0.0 requirements. (`#46 <https://github.com/ipld/py-cid/issues/46>`__)
+- Copied ``base58`` code directly into ``py-cid`` to avoid future dependency issues. (`#52 <https://github.com/ipld/py-cid/issues/52>`__)
+
+
 py-cid v0.3.1 (2025-09-12)
 --------------------------
 
