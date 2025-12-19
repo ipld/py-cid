@@ -4,9 +4,6 @@ build:
   os: ubuntu-22.04
   tools:
     python: "3.10"
-  commands:
-    - rm -f docs/cid.rst docs/modules.rst
-    - python -m sphinx.ext.apidoc -o docs/ cid
 
 sphinx:
   configuration: docs/conf.py
