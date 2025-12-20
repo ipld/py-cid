@@ -1,4 +1,6 @@
-from typing import cast
+import json
+import re
+from typing import TYPE_CHECKING, Any, cast
 
 from morphys import ensure_bytes, ensure_unicode
 import multibase
@@ -7,9 +9,14 @@ import multihash as mh
 
 from . import base58
 
+if TYPE_CHECKING:
+    from .prefix import Prefix
+
 
 class BaseCID:
-    __hash__ = object.__hash__
+    def __hash__(self) -> int:
+        """Make CID hashable for use in sets and dicts."""
+        return hash((self.version, self.codec, self.multihash))
 
     def __init__(self, version: int, codec: str, multihash: str | bytes) -> None:
         """
@@ -67,6 +74,115 @@ class BaseCID:
             (self.version == other.version)
             and (self.codec == other.codec)
             and (self.multihash == other.multihash)
+        )
+
+    def to_json_dict(self) -> dict[str, str]:
+        """
+        Convert CID to IPLD JSON format.
+
+        Returns a dictionary in IPLD JSON format: {"/": "<cid-string>"}
+
+        :return: IPLD JSON format dictionary
+        :rtype: dict
+        """
+        return {"/": str(self)}
+
+    @classmethod
+    def from_json_dict(cls, data: dict[str, Any]) -> "CIDv0 | CIDv1":
+        """
+        Parse CID from IPLD JSON format.
+
+        :param dict data: IPLD JSON format dictionary with "/" key
+        :return: CID object
+        :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
+        :raises ValueError: if the format is invalid
+        """
+        if not isinstance(data, dict):
+            msg = "Invalid IPLD JSON format: expected dict"
+            raise ValueError(msg)
+        if "/" not in data:
+            msg = 'Invalid IPLD JSON format: missing "/" key'
+            raise ValueError(msg)
+        return from_string(str(data["/"]))
+
+    def defined(self) -> bool:
+        """
+        Check if CID is defined (valid).
+
+        :return: True if CID is defined, False otherwise
+        :rtype: bool
+        """
+        return self.multihash is not None and len(self.multihash) > 0
+
+    def to_bytes(self) -> bytes:
+        """
+        Serialize to bytes (alias for buffer).
+
+        :return: Raw CID bytes
+        :rtype: bytes
+        """
+        return self.buffer
+
+    def to_text(self) -> bytes:
+        """
+        Serialize to text.
+
+        :return: Encoded CID string as bytes
+        :rtype: bytes
+        """
+        return str(self).encode()
+
+    @classmethod
+    def from_text(cls, text: bytes) -> "CIDv0 | CIDv1":
+        """
+        Deserialize from text.
+
+        :param bytes text: Encoded CID string
+        :return: CID object
+        :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
+        """
+        return from_string(text.decode())
+
+    def key_string(self) -> str:
+        """
+        Return binary representation as string for use as map keys.
+
+        :return: Binary representation as string
+        :rtype: str
+        """
+        return self.buffer.decode("latin-1")
+
+    def loggable(self) -> dict[str, str]:
+        """
+        Return dict for logging purposes.
+
+        :return: Dictionary with CID information
+        :rtype: dict
+        """
+        return {"cid": str(self)}
+
+    def prefix(self) -> "Prefix":
+        """
+        Get prefix from CID.
+
+        Extracts the prefix metadata (version, codec, multihash type/length) from the CID.
+
+        :return: Prefix object
+        :rtype: :py:class:`cid.prefix.Prefix`
+        """
+        from .prefix import Prefix
+
+        # Decode multihash to get type and length
+        mh_info = mh.decode(self.multihash)
+        # mh_info has name, code, length, digest attributes
+        mh_type = mh_info.name
+        mh_length = mh_info.length
+
+        return Prefix(
+            version=self.version,
+            codec=self.codec,
+            mh_type=mh_type,
+            mh_length=mh_length,
         )
 
 
@@ -237,18 +353,56 @@ def is_cid(cidstr: str | bytes) -> bool:
         return False
 
 
+def parse_ipfs_path(path: str) -> str:
+    """
+    Extract CID from /ipfs/ path.
+
+    Handles various formats:
+    - /ipfs/Qm...
+    - https://ipfs.io/ipfs/Qm...
+    - http://localhost:8080/ipfs/Qm...
+
+    :param str path: Path containing /ipfs/ and CID
+    :return: Extracted CID string, or original path if no /ipfs/ found
+    :rtype: str
+    """
+    # Only parse if it looks like a path/URL (contains /ipfs/ and is not just a CID)
+    if "/ipfs/" not in path:
+        return path
+
+    patterns = [
+        r"/ipfs/([^/?#]+)",  # /ipfs/CID
+        r"ipfs\.io/ipfs/([^/?#]+)",  # https://ipfs.io/ipfs/CID
+        r"localhost:\d+/ipfs/([^/?#]+)",  # http://localhost:8080/ipfs/CID
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, path)
+        if match:
+            return match.group(1)
+
+    return path  # No /ipfs/ path found, return as-is
+
+
 def from_string(cidstr: str) -> CIDv0 | CIDv1:
     """
     Creates a CID object from a encoded form
+
+    Automatically extracts CID from /ipfs/ paths if present.
 
     :param str cidstr: can be
 
         - base58-encoded multihash
         - multihash
         - multibase-encoded multihash
+        - /ipfs/ path containing CID
+        - URL containing /ipfs/ path
     :return: a CID object
     :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
     """
+    # Extract CID from /ipfs/ path if present (only for strings)
+    if isinstance(cidstr, str):
+        cidstr = parse_ipfs_path(cidstr)
     cidbytes = ensure_bytes(cidstr, "utf-8")
     return from_bytes(cidbytes)
 
@@ -309,3 +463,179 @@ def from_bytes(cidbytes: bytes) -> CIDv0 | CIDv1:
         raise
 
     return make_cid(version, codec, multihash)
+
+
+def extract_encoding(cid_str: str) -> str:
+    """
+    Extract multibase encoding from CID string without fully parsing it.
+
+    :param str cid_str: CID string
+    :return: Encoding name (e.g., "base58btc", "base32")
+    :rtype: str
+    :raises ValueError: if the CID string is too short or invalid
+    """
+    if len(cid_str) < 2:
+        msg = "CID string too short"
+        raise ValueError(msg)
+
+    # CIDv0 detection (Base58BTC, 46 chars, starts with "Qm")
+    if len(cid_str) == 46 and cid_str.startswith("Qm"):
+        return "base58btc"
+
+    # CIDv1: first character is multibase encoding
+    encoding_char = cid_str[0]
+    try:
+        # Get encoding from multibase using the first character
+        encoding_info = multibase.get_codec(encoding_char)
+        return encoding_info.encoding
+    except (ValueError, KeyError, AttributeError) as e:
+        msg = f"Invalid multibase encoding: {encoding_char}"
+        raise ValueError(msg) from e
+
+
+def from_bytes_strict(cidbytes: bytes) -> CIDv0 | CIDv1:
+    """
+    Parse CID from bytes, validating that there are no trailing bytes.
+
+    This is a strict version of from_bytes() that ensures all input bytes
+    are consumed during parsing.
+
+    :param bytes cidbytes: CID bytes to parse
+    :return: CID object
+    :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
+    :raises ValueError: if there are trailing bytes or parsing fails
+    """
+    cid = from_bytes(cidbytes)
+
+    # Calculate expected length
+    if cid.version == 0:
+        expected_len = len(cid.multihash)  # CIDv0 is just multihash
+    else:
+        # CIDv1: <version><codec><multihash>
+        # Version is 1 byte, codec is varint, multihash is variable
+        codec_prefix = multicodec.get_prefix(cid.codec)
+        expected_len = 1 + len(codec_prefix) + len(cid.multihash)
+
+    # Check for trailing bytes
+    if len(cidbytes) > expected_len:
+        msg = "trailing bytes in CID data"
+        raise ValueError(msg)
+
+    return cid
+
+
+def from_reader(reader) -> tuple[int, CIDv0 | CIDv1]:
+    """
+    Parse CID from reader/stream.
+
+    Reads bytes incrementally from the reader and parses a CID,
+    returning the number of bytes read and the CID object.
+
+    :param reader: File-like object with read() method
+    :return: Tuple of (bytes_read, CID)
+    :rtype: tuple[int, :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`]
+    :raises ValueError: if parsing fails
+    """
+    # Read first byte to determine version
+    first_byte = reader.read(1)
+    if not first_byte:
+        msg = "Not enough data to read CID"
+        raise ValueError(msg)
+
+    version = int(first_byte[0])
+
+    if version == 0:
+        # CIDv0: just read the multihash
+        # We need to determine multihash length
+        # Read enough bytes to determine length (multihash has length prefix)
+        peek = reader.read(2)
+        if len(peek) < 2:
+            msg = "Not enough data to read CIDv0 multihash"
+            raise ValueError(msg)
+
+        # Multihash format: <code><length><digest>
+        # Length is second byte
+        mh_length = int(peek[1])
+        # Total multihash length: 2 bytes (code + length) + digest length
+        remaining = mh_length
+        multihash_bytes = first_byte + peek + reader.read(remaining)
+
+        bytes_read = len(multihash_bytes)
+        cid = from_bytes(multihash_bytes)
+        return bytes_read, cid
+
+    elif version == 1:
+        # CIDv1: <version><codec-varint><multihash>
+        # Read codec (varint)
+        codec_bytes = bytearray()
+        codec_bytes.append(first_byte[0])
+        bytes_read = 1
+
+        # Read varint for codec
+        while True:
+            byte = reader.read(1)
+            if not byte:
+                msg = "Not enough data to read CIDv1 codec"
+                raise ValueError(msg)
+            codec_bytes.append(byte[0])
+            bytes_read += 1
+            if (byte[0] & 0x80) == 0:
+                break
+
+        # Now read multihash
+        # Peek to get multihash length
+        peek = reader.read(2)
+        if len(peek) < 2:
+            msg = "Not enough data to read CIDv1 multihash"
+            raise ValueError(msg)
+
+        mh_length = int(peek[1])
+        remaining = mh_length
+        multihash_bytes = reader.read(remaining)
+        if len(multihash_bytes) < remaining:
+            msg = "Not enough data to read CIDv1 multihash"
+            raise ValueError(msg)
+
+        codec_bytes.extend(peek)
+        codec_bytes.extend(multihash_bytes)
+        bytes_read += len(peek) + len(multihash_bytes)
+
+        cid = from_bytes(bytes(codec_bytes))
+        return bytes_read, cid
+
+    else:
+        msg = f"Invalid CID version: {version}"
+        raise ValueError(msg)
+
+
+def must_parse(v: str | bytes) -> CIDv0 | CIDv1:
+    """
+    Parse CID, raising exception on error.
+
+    This is a convenience function that always raises an exception
+    on parsing failure (unlike make_cid which also raises exceptions).
+
+    :param v: CID string or bytes
+    :type v: str or bytes
+    :return: CID object
+    :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
+    :raises ValueError: if parsing fails
+    """
+    try:
+        return make_cid(v)
+    except ValueError as e:
+        msg = f"Failed to parse CID: {e}"
+        raise ValueError(msg) from e
+
+
+class CIDJSONEncoder(json.JSONEncoder):
+    """
+    Custom JSON encoder for CID objects.
+
+    Encodes CID objects to IPLD JSON format: {"/": "<cid-string>"}
+    """
+
+    def default(self, obj: Any) -> Any:  # type: ignore[override]
+        if isinstance(obj, (CIDv0, CIDv1)):
+            return obj.to_json_dict()
+        return super().default(obj)
