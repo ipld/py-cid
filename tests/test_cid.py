@@ -1,4 +1,5 @@
 import hashlib
+import json
 import string
 
 import pytest
@@ -12,7 +13,8 @@ from multibase.multibase import ENCODINGS
 import multicodec
 import multihash
 
-from cid import CIDv0, CIDv1, base58, from_string, is_cid, make_cid
+from cid import CIDJSONEncoder, CIDv0, CIDv1, base58, from_string, is_cid, make_cid
+from cid.cid import BaseCID
 
 ALLOWED_ENCODINGS = [encoding for encoding in ENCODINGS if encoding.code != b"\x00"]
 
@@ -246,3 +248,91 @@ class TestFromString:
     def test_invalid_cid_length(self):
         with pytest.raises(ValueError, match="cid length is invalid"):
             from_string("011111111")
+
+
+class TestJSONMarshaling:
+    """Tests for IPLD JSON format marshaling"""
+
+    @pytest.fixture
+    def cidv0(self, test_hash):
+        return CIDv0(test_hash)
+
+    @pytest.fixture
+    def cidv1(self, test_hash):
+        return CIDv1("dag-pb", test_hash)
+
+    def test_to_json_dict_cidv0(self, cidv0):
+        """to_json_dict: returns IPLD JSON format for CIDv0"""
+        result = cidv0.to_json_dict()
+        assert isinstance(result, dict)
+        assert "/" in result
+        assert result["/"] == str(cidv0)
+
+    def test_to_json_dict_cidv1(self, cidv1):
+        """to_json_dict: returns IPLD JSON format for CIDv1"""
+        result = cidv1.to_json_dict()
+        assert isinstance(result, dict)
+        assert "/" in result
+        assert result["/"] == str(cidv1)
+
+    def test_from_json_dict_cidv0(self, cidv0):
+        """from_json_dict: parses IPLD JSON format for CIDv0"""
+        json_data = {"/": str(cidv0)}
+        result = BaseCID.from_json_dict(json_data)
+        assert result == cidv0
+        assert isinstance(result, CIDv0)
+
+    def test_from_json_dict_cidv1(self, cidv1):
+        """from_json_dict: parses IPLD JSON format for CIDv1"""
+        json_data = {"/": str(cidv1)}
+        result = BaseCID.from_json_dict(json_data)
+        assert result == cidv1
+        assert isinstance(result, CIDv1)
+
+    def test_from_json_dict_invalid_type(self):
+        """from_json_dict: raises ValueError for non-dict input"""
+        with pytest.raises(ValueError, match="Invalid IPLD JSON format: expected dict"):
+            BaseCID.from_json_dict("not a dict")  # type: ignore[arg-type]
+
+    def test_from_json_dict_missing_key(self):
+        """from_json_dict: raises ValueError for missing '/' key"""
+        with pytest.raises(ValueError, match='Invalid IPLD JSON format: missing "/" key'):
+            BaseCID.from_json_dict({"cid": "Qm..."})
+
+    def test_json_encoder(self, cidv0, cidv1):
+        """CIDJSONEncoder: encodes CID objects to IPLD JSON format"""
+        # Test with CIDv0
+        json_str = json.dumps(cidv0, cls=CIDJSONEncoder)
+        data = json.loads(json_str)
+        assert data == {"/": str(cidv0)}
+
+        # Test with CIDv1
+        json_str = json.dumps(cidv1, cls=CIDJSONEncoder)
+        data = json.loads(json_str)
+        assert data == {"/": str(cidv1)}
+
+    def test_json_round_trip(self, cidv0, cidv1):
+        """JSON marshaling: round-trip serialization/deserialization"""
+        # Test CIDv0
+        json_data = cidv0.to_json_dict()
+        restored = BaseCID.from_json_dict(json_data)
+        assert restored == cidv0
+
+        # Test CIDv1
+        json_data = cidv1.to_json_dict()
+        restored = BaseCID.from_json_dict(json_data)
+        assert restored == cidv1
+
+    def test_json_encoder_with_list(self, cidv0, cidv1):
+        """CIDJSONEncoder: works with lists containing CIDs"""
+        cids = [cidv0, cidv1]
+        json_str = json.dumps(cids, cls=CIDJSONEncoder)
+        data = json.loads(json_str)
+        assert data == [{"/": str(cidv0)}, {"/": str(cidv1)}]
+
+    def test_json_encoder_with_dict(self, cidv0):
+        """CIDJSONEncoder: works with dicts containing CIDs"""
+        data_dict = {"root": cidv0, "other": "value"}
+        json_str = json.dumps(data_dict, cls=CIDJSONEncoder)
+        data = json.loads(json_str)
+        assert data == {"root": {"/": str(cidv0)}, "other": "value"}

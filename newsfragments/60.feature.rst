@@ -1,0 +1,26 @@
+Add comprehensive feature parity with go-cid implementation.
+
+This includes 13 major features organized by priority:
+
+**Critical Features (P0):**
+- JSON Marshaling (IPLD Format): ``BaseCID.to_json_dict()``, ``BaseCID.from_json_dict()``, and ``CIDJSONEncoder`` for full JSON integration
+- Prefix Operations: ``Prefix`` class for CID metadata management, ``Prefix.sum()`` for creating CIDs from data, and ``BaseCID.prefix()`` for extracting prefix
+
+**High Priority Features (P1):**
+- /ipfs/ Path Parsing: ``parse_ipfs_path()`` and automatic extraction in ``from_string()``
+- Extract Encoding: ``extract_encoding()`` to get multibase encoding without full parsing
+- Trailing Bytes Validation: ``from_bytes_strict()`` for strict CID parsing
+
+**Medium Priority Features (P2):**
+- Builder Pattern: ``V0Builder`` and ``V1Builder`` for fluent CID construction
+- Set Operations: ``CIDSet`` class for managing collections of unique CIDs with full Python set interface
+- Defined Check: ``BaseCID.defined()`` to check if CID is valid
+- Stream Parsing: ``from_reader()`` for parsing CIDs from streams
+
+**Low Priority Features (P3):**
+- MustParse: ``must_parse()`` convenience function for strict parsing
+- Binary/Text Marshaling: ``BaseCID.to_bytes()``, ``BaseCID.to_text()``, and ``BaseCID.from_text()``
+- KeyString: ``BaseCID.key_string()`` for binary representation as string
+- Loggable: ``BaseCID.loggable()`` for logging purposes
+
+All features include comprehensive tests (168 total, 81% coverage) and complete documentation with working code examples.
