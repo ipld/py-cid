@@ -2,7 +2,7 @@
 
 __author__ = """Dhruv Baldawa"""
 __email__ = "dhruv@dhruvb.com"
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from .cid import (  # noqa: F401
     CIDJSONEncoder,
