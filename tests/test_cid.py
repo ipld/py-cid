@@ -48,6 +48,18 @@ class TestCIDv0:
     def test_str(self, cid):
         assert str(cid) == ensure_unicode(cid.encode())
 
+    def test_cidv0_rejects_non_sha256(self):
+        digest = hashlib.sha3_512(b"hello").digest()
+        mh_bytes = multihash.encode(digest, "sha3-512")
+        with pytest.raises(ValueError, match="must be sha2-256"):
+            CIDv0(mh_bytes)
+
+    def test_cidv0_rejects_truncated_digest(self):
+        digest = hashlib.sha256(b"hello").digest()[:16]
+        mh_bytes = multihash.encode(digest, "sha2-256", 16)
+        with pytest.raises(ValueError, match="32-byte digest"):
+            CIDv0(mh_bytes)
+
 
 class TestCIDv1:
     TEST_CODEC = "dag-pb"
@@ -88,8 +100,8 @@ class TestCID:
 
     def test_cidv0_neq(self):
         """Check for inequality for CIDv0 for different hashes"""
-        assert CIDv0(b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n") != CIDv0(
-            b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1o",
+        assert CIDv0(base58.b58decode(b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1n")) != CIDv0(
+            base58.b58decode(b"QmdfTbBqBPQ7VNxZEYEj14VmRuZBkqFbiwReogJgS1zR1o"),
         )
 
     def test_cidv0_eq_cidv1(self, test_hash):

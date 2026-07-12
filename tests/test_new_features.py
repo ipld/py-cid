@@ -202,7 +202,9 @@ class TestCIDSet:
         cid_set = CIDSet()
         cid_set.add(cidv0)
         assert cid_set.has(cidv0)
-        assert not cid_set.has(CIDv0(b"different"))
+        different_digest = hashlib.sha256(b"different").digest()
+        different_mh = multihash.encode(different_digest, "sha2-256")
+        assert not cid_set.has(CIDv0(different_mh))
 
     def test_cid_set_remove(self, cidv0):
         """CIDSet.remove: removes CID from set"""
@@ -265,7 +267,9 @@ class TestCIDSet:
         cid_set = CIDSet()
         cid_set.add(cidv0)
         assert cidv0 in cid_set
-        assert CIDv0(b"different") not in cid_set
+        different_digest = hashlib.sha256(b"different").digest()
+        different_mh = multihash.encode(different_digest, "sha2-256")
+        assert CIDv0(different_mh) not in cid_set
 
     def test_cid_set_iter(self, cidv0, cidv1):
         """CIDSet.__iter__: makes set iterable"""
