@@ -1,6 +1,5 @@
 """CID Prefix operations for creating CIDs from data."""
 
-import hashlib
 from typing import TYPE_CHECKING
 
 import multicodec
@@ -111,22 +110,10 @@ class Prefix:
         :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
         :raises NotImplementedError: if hash type is not supported
         """
-        # Hash data using mh_type
-        if self.mh_type == "sha2-256":
-            digest = hashlib.sha256(data).digest()
-        elif self.mh_type == "sha2-512":
-            digest = hashlib.sha512(data).digest()
-        else:
-            # Use multihash library for other types
-            # This is a simplified implementation - in practice,
-            # you'd want to support more hash types
-            msg = f"Hash type {self.mh_type} not fully implemented"
-            raise NotImplementedError(msg)
-
         # Encode as multihash
         # Pass None if mh_length is -1 (default), otherwise use specified length
         mh_length = None if self.mh_length == -1 else self.mh_length
-        mhash = multihash.encode(digest, self.mh_type, mh_length)
+        mhash = multihash.sum(data, self.mh_type, length=mh_length).encode()
 
         # Create CID
         if self.version == 0:
