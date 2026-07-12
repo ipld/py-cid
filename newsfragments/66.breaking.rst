@@ -1,0 +1,1 @@
+Change CIDv1.encode() default encoding to base32 to conform with CID specification.
