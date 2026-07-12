@@ -255,7 +255,7 @@ class CIDv1(BaseCID):
         """
         return b"".join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
 
-    def encode(self, encoding: str | None = "base58btc") -> bytes:
+    def encode(self, encoding: str | None = "base32") -> bytes:
         """
         Encoded version of the raw representation
 
