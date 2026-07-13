@@ -1,6 +1,11 @@
-import pytest
-from hypothesis import given, strategies as st, settings
-from cid import make_cid, CIDv1, CIDv0
+from hypothesis import (
+    given,
+    settings,
+    strategies as st,
+)
+
+from cid import make_cid
+
 
 @given(st.binary(max_size=200))
 @settings(max_examples=1000)
