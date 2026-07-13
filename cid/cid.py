@@ -536,8 +536,24 @@ def from_reader(reader) -> tuple[int, CIDv0 | CIDv1]:
     :rtype: tuple[int, :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`]
     :raises ValueError: if parsing fails
     """
+    import varint
+
+    class TrackingReader:
+        def __init__(self, r):
+            self.r = r
+            self.bytes_read = 0
+            self.buffer = bytearray()
+
+        def read(self, n: int = 1) -> bytes:
+            b = self.r.read(n)
+            self.bytes_read += len(b)
+            self.buffer.extend(b)
+            return b
+
+    tr = TrackingReader(reader)
+
     # Read first byte to determine version
-    first_byte = reader.read(1)
+    first_byte = tr.read(1)
     if not first_byte:
         msg = "Not enough data to read CID"
         raise ValueError(msg)
@@ -545,63 +561,36 @@ def from_reader(reader) -> tuple[int, CIDv0 | CIDv1]:
     version = int(first_byte[0])
 
     if version == 0:
-        # CIDv0: just read the multihash
-        # We need to determine multihash length
-        # Read enough bytes to determine length (multihash has length prefix)
-        peek = reader.read(2)
-        if len(peek) < 2:
-            msg = "Not enough data to read CIDv0 multihash"
-            raise ValueError(msg)
+        # CIDv0: first byte is the multihash code
+        try:
+            mh_length = varint.decode_stream(tr)
+            digest = tr.read(mh_length)
+            if len(digest) < mh_length:
+                raise ValueError("Not enough data to read CIDv0 multihash")
+        except (EOFError, TypeError, ValueError) as e:
+            raise ValueError("Not enough data to read CIDv0 multihash") from e
 
-        # Multihash format: <code><length><digest>
-        # Length is second byte
-        mh_length = int(peek[1])
-        # Total multihash length: 2 bytes (code + length) + digest length
-        remaining = mh_length
-        multihash_bytes = first_byte + peek + reader.read(remaining)
-
-        bytes_read = len(multihash_bytes)
-        cid = from_bytes(multihash_bytes)
-        return bytes_read, cid
+        cid = from_bytes(bytes(tr.buffer))
+        return tr.bytes_read, cid
 
     elif version == 1:
-        # CIDv1: <version><codec-varint><multihash>
-        # Read codec (varint)
-        codec_bytes = bytearray()
-        codec_bytes.append(first_byte[0])
-        bytes_read = 1
+        try:
+            # Read codec (varint)
+            varint.decode_stream(tr)
+            # Read multihash code (varint)
+            varint.decode_stream(tr)
+            # Read multihash length (varint)
+            mh_length = varint.decode_stream(tr)
 
-        # Read varint for codec
-        while True:
-            byte = reader.read(1)
-            if not byte:
-                msg = "Not enough data to read CIDv1 codec"
-                raise ValueError(msg)
-            codec_bytes.append(byte[0])
-            bytes_read += 1
-            if (byte[0] & 0x80) == 0:
-                break
+            # Read digest
+            digest = tr.read(mh_length)
+            if len(digest) < mh_length:
+                raise ValueError("Not enough data to read CIDv1 multihash")
+        except (EOFError, TypeError, ValueError) as e:
+            raise ValueError("Not enough data to read CIDv1") from e
 
-        # Now read multihash
-        # Peek to get multihash length
-        peek = reader.read(2)
-        if len(peek) < 2:
-            msg = "Not enough data to read CIDv1 multihash"
-            raise ValueError(msg)
-
-        mh_length = int(peek[1])
-        remaining = mh_length
-        multihash_bytes = reader.read(remaining)
-        if len(multihash_bytes) < remaining:
-            msg = "Not enough data to read CIDv1 multihash"
-            raise ValueError(msg)
-
-        codec_bytes.extend(peek)
-        codec_bytes.extend(multihash_bytes)
-        bytes_read += len(peek) + len(multihash_bytes)
-
-        cid = from_bytes(bytes(codec_bytes))
-        return bytes_read, cid
+        cid = from_bytes(bytes(tr.buffer))
+        return tr.bytes_read, cid
 
     else:
         msg = f"Invalid CID version: {version}"

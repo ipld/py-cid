@@ -1,0 +1,1 @@
+Fix `from_reader()` to properly parse multi-byte varints for codec and multihash length.
