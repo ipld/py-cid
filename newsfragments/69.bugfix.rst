@@ -1,0 +1,1 @@
+Update `CIDSet.for_each()` to stop iteration and return the error if the callback function raises an exception or returns an exception.
