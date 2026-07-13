@@ -1,7 +1,6 @@
 """Builder pattern for CID construction."""
 
 from abc import ABC, abstractmethod
-import hashlib
 from typing import TYPE_CHECKING
 
 import multihash
@@ -59,8 +58,7 @@ class V0Builder(Builder):
         """
         from .cid import CIDv0
 
-        digest = hashlib.sha256(data).digest()
-        mhash = multihash.encode(digest, "sha2-256")
+        mhash = multihash.sum(data, "sha2-256").encode()
         return CIDv0(mhash)
 
     def get_codec(self) -> str:
@@ -113,16 +111,8 @@ class V1Builder(Builder):
         """
         from .cid import CIDv1
 
-        if self.mh_type == "sha2-256":
-            digest = hashlib.sha256(data).digest()
-        elif self.mh_type == "sha2-512":
-            digest = hashlib.sha512(data).digest()
-        else:
-            msg = f"Hash type {self.mh_type} not fully implemented"
-            raise NotImplementedError(msg)
-
         mh_length = None if self.mh_length == -1 else self.mh_length
-        mhash = multihash.encode(digest, self.mh_type, mh_length)
+        mhash = multihash.sum(data, self.mh_type, length=mh_length).encode()
         return CIDv1(self.codec, mhash)
 
     def get_codec(self) -> str:
