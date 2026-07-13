@@ -195,6 +195,19 @@ class CIDv0(BaseCID):
         """
         :param bytes multihash: multihash for the CID
         """
+        multihash_bytes = ensure_bytes(multihash)
+        # Validate multihash is sha2-256 with 32-byte digest
+        try:
+            mh_info = mh.decode(multihash_bytes)
+        except Exception as e:
+            raise ValueError(f"invalid multihash for CIDv0: {e}") from e
+
+        if mh_info.code != 0x12 or mh_info.length != 32:
+            raise ValueError(
+                f"invalid hash for CIDv0: must be sha2-256 with 32-byte digest, "
+                f"got {mh_info.name} with {mh_info.length}-byte digest"
+            )
+
         super().__init__(0, self.CODEC, multihash)
 
     @property
