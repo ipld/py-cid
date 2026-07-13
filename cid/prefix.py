@@ -216,10 +216,10 @@ class Prefix:
     def _mh_type_to_code(mh_type: str) -> int:
         """Convert multihash type name to code."""
         try:
-            return multihash.Func[mh_type.replace("-", "_")].value
+            return multihash.Func[mh_type.replace("-", "_")].value  # type: ignore
         except KeyError:
             try:
-                return multihash.coerce_code(mh_type)
+                return int(multihash.coerce_code(mh_type))  # type: ignore
             except (ValueError, TypeError):
                 msg = f"Unknown multihash type: {mh_type}"
                 raise ValueError(msg)
