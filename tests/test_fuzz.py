@@ -16,6 +16,7 @@ def test_from_bytes_never_crashes(data):
     except (ValueError, KeyError, TypeError):
         pass  # Any exception is fine, just no crashes
 
+
 @given(st.binary(min_size=34, max_size=100))
 @settings(max_examples=500)
 def test_cid_roundtrip_never_crashes(data):
