@@ -1,0 +1,1 @@
+Add `pytest-benchmark` based performance benchmarking tests to evaluate `Cid.prefix`, `Cid.encode`, and `Prefix.sum` execution speeds.
