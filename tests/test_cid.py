@@ -80,6 +80,10 @@ class TestCIDv1:
         assert buffer[0] == 1
         assert buffer[1:] == multicodec.add_prefix(self.TEST_CODEC, cid.multihash)
 
+    def test_buffer_cached(self, cid):
+        """.buffer: same bytes object is returned on repeated access"""
+        assert cid.buffer is cid.buffer
+
     def test_encode_default(self, cid):
         """#encode defaults to base32 encoding"""
         assert cid.encode() == b"bafybeifzjut3te2nhyekklss27nh3k72ysco7y32koao5eei66wof36n5e"
