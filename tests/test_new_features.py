@@ -202,7 +202,9 @@ class TestCIDSet:
         cid_set = CIDSet()
         cid_set.add(cidv0)
         assert cid_set.has(cidv0)
-        assert not cid_set.has(CIDv0(b"different"))
+        different_digest = hashlib.sha256(b"different").digest()
+        different_mh = multihash.encode(different_digest, "sha2-256")
+        assert not cid_set.has(CIDv0(different_mh))
 
     def test_cid_set_remove(self, cidv0):
         """CIDSet.remove: removes CID from set"""
@@ -260,12 +262,34 @@ class TestCIDSet:
         assert cidv0 in collected
         assert cidv1 in collected
 
+    def test_cid_set_for_each_error_propagation(self, cidv0, cidv1):
+        """CIDSet.for_each: stops and propagates error"""
+        cid_set = CIDSet()
+        cid_set.add(cidv0)
+        cid_set.add(cidv1)
+
+        def failing_func(cid):
+            raise ValueError("test error")
+
+        result = cid_set.for_each(failing_func)
+        assert isinstance(result, ValueError)
+        assert str(result) == "test error"
+
+        def returning_func(cid):
+            return TypeError("return error")
+
+        result2 = cid_set.for_each(returning_func)
+        assert isinstance(result2, TypeError)
+        assert str(result2) == "return error"
+
     def test_cid_set_contains(self, cidv0):
         """CIDSet.__contains__: supports 'in' operator"""
         cid_set = CIDSet()
         cid_set.add(cidv0)
         assert cidv0 in cid_set
-        assert CIDv0(b"different") not in cid_set
+        different_digest = hashlib.sha256(b"different").digest()
+        different_mh = multihash.encode(different_digest, "sha2-256")
+        assert CIDv0(different_mh) not in cid_set
 
     def test_cid_set_iter(self, cidv0, cidv1):
         """CIDSet.__iter__: makes set iterable"""

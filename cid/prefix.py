@@ -1,6 +1,5 @@
 """CID Prefix operations for creating CIDs from data."""
 
-import hashlib
 from typing import TYPE_CHECKING
 
 import multicodec
@@ -111,22 +110,10 @@ class Prefix:
         :rtype: :py:class:`cid.CIDv0` or :py:class:`cid.CIDv1`
         :raises NotImplementedError: if hash type is not supported
         """
-        # Hash data using mh_type
-        if self.mh_type == "sha2-256":
-            digest = hashlib.sha256(data).digest()
-        elif self.mh_type == "sha2-512":
-            digest = hashlib.sha512(data).digest()
-        else:
-            # Use multihash library for other types
-            # This is a simplified implementation - in practice,
-            # you'd want to support more hash types
-            msg = f"Hash type {self.mh_type} not fully implemented"
-            raise NotImplementedError(msg)
-
         # Encode as multihash
         # Pass None if mh_length is -1 (default), otherwise use specified length
         mh_length = None if self.mh_length == -1 else self.mh_length
-        mhash = multihash.encode(digest, self.mh_type, mh_length)
+        mhash = multihash.sum(data, self.mh_type, length=mh_length).encode()
 
         # Create CID
         if self.version == 0:
@@ -215,40 +202,23 @@ class Prefix:
     @staticmethod
     def _mh_type_to_code(mh_type: str) -> int:
         """Convert multihash type name to code."""
-        # Common multihash type codes
-        # These match the multiformats specification
-        mh_codes = {
-            "sha1": 0x11,
-            "sha2-256": 0x12,
-            "sha2-512": 0x13,
-            "sha3-224": 0x17,
-            "sha3-256": 0x16,
-            "sha3-512": 0x14,
-            "blake2b-256": 0xB220,
-            "blake2b-512": 0xB240,
-        }
-        if mh_type not in mh_codes:
-            msg = f"Unknown multihash type: {mh_type}"
-            raise ValueError(msg)
-        return mh_codes[mh_type]
+        try:
+            return multihash.Func[mh_type.replace("-", "_")].value  # type: ignore
+        except KeyError:
+            try:
+                return int(multihash.coerce_code(mh_type))  # type: ignore
+            except (ValueError, TypeError):
+                msg = f"Unknown multihash type: {mh_type}"
+                raise ValueError(msg)
 
     @staticmethod
     def _mh_code_to_type(mh_code: int) -> str:
         """Convert multihash code to type name."""
-        mh_types = {
-            0x11: "sha1",
-            0x12: "sha2-256",
-            0x13: "sha2-512",
-            0x17: "sha3-224",
-            0x16: "sha3-256",
-            0x14: "sha3-512",
-            0xB220: "blake2b-256",
-            0xB240: "blake2b-512",
-        }
-        if mh_code not in mh_types:
+        try:
+            return multihash.Func(mh_code).name.replace("_", "-")
+        except ValueError:
             msg = f"Unknown multihash code: {mh_code}"
             raise ValueError(msg)
-        return mh_types[mh_code]
 
     def __eq__(self, other: object) -> bool:
         """Check equality with another Prefix."""
