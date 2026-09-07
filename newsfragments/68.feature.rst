@@ -1,0 +1,1 @@
+Add ``Undef`` sentinel for representing undefined/nil CIDs, matching go-cid ``Undef``.

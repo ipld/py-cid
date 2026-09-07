@@ -8,6 +8,7 @@ from .cid import (  # noqa: F401
     CIDJSONEncoder,
     CIDv0,
     CIDv1,
+    Undef,
     extract_encoding,
     from_bytes,
     from_bytes_strict,
