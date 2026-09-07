@@ -1,1 +1,3 @@
-Change CIDv1.encode() default encoding to base32 to conform with CID specification.
+Change CIDv1.encode() default encoding from base58btc to base32 to conform with the CID specification.
+
+This also changes ``str(cid)`` for CIDv1 objects (which uses ``encode()``), and therefore IPLD JSON serialization via ``to_json_dict()`` / ``CIDJSONEncoder``, which emit the string form. Callers that require base58btc must pass ``encode("base58btc")`` explicitly.

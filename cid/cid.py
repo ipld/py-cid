@@ -257,10 +257,13 @@ class CIDv1(BaseCID):
 
     def encode(self, encoding: str | None = "base32") -> bytes:
         """
-        Encoded version of the raw representation
+        Encoded version of the raw representation.
+
+        The default encoding is ``base32`` (CID specification default for CIDv1).
+        Callers that need the previous default can pass ``"base58btc"`` explicitly.
 
         :param str encoding: the encoding to use to encode the raw representation,
-            should be supported by ``py-multibase``
+            should be supported by ``py-multibase``. Defaults to ``base32``.
         :return: encoded raw representation with the given encoding
         :rtype: bytes
         """
