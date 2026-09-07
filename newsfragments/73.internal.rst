@@ -1,0 +1,1 @@
+Add ``version.json`` for consistency with go-cid and the multiformats ecosystem; bump-my-version keeps it in sync on release.
