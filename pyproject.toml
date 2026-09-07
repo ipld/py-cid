@@ -64,6 +64,7 @@ dev = [
     "pre-commit>=3.0.0",
     "towncrier>=24,<25",
     "pyrefly>=0.17.1,<0.18.0",
+    "pytest-benchmark>=4.0.0",
 ]
 
 [tool.setuptools]
