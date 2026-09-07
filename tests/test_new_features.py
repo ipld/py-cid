@@ -262,6 +262,26 @@ class TestCIDSet:
         assert cidv0 in collected
         assert cidv1 in collected
 
+    def test_cid_set_for_each_error_propagation(self, cidv0, cidv1):
+        """CIDSet.for_each: stops and propagates error"""
+        cid_set = CIDSet()
+        cid_set.add(cidv0)
+        cid_set.add(cidv1)
+
+        def failing_func(cid):
+            raise ValueError("test error")
+
+        result = cid_set.for_each(failing_func)
+        assert isinstance(result, ValueError)
+        assert str(result) == "test error"
+
+        def returning_func(cid):
+            return TypeError("return error")
+
+        result2 = cid_set.for_each(returning_func)
+        assert isinstance(result2, TypeError)
+        assert str(result2) == "return error"
+
     def test_cid_set_contains(self, cidv0):
         """CIDSet.__contains__: supports 'in' operator"""
         cid_set = CIDSet()

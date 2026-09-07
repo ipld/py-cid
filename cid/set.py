@@ -1,7 +1,7 @@
 """CID Set operations for managing collections of unique CIDs."""
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .cid import CIDv0, CIDv1
@@ -77,15 +77,22 @@ class CIDSet:
             return True
         return False
 
-    def for_each(self, func: Callable[["CIDv0 | CIDv1"], None]) -> None:
+    def for_each(self, func: Callable[["CIDv0 | CIDv1"], "Any"]) -> "Exception | None":
         """
-        Call function for each CID in set.
+        Call function for each CID in set. Stop and return error if func raises or returns an error.
 
         :param func: Function to call for each CID
         :type func: callable
+        :return: Exception if an error occurred, None otherwise
         """
         for cid in self._set:
-            func(cid)
+            try:
+                result = func(cid)
+                if result is not None and isinstance(result, Exception):
+                    return result
+            except Exception as e:
+                return e
+        return None
 
     def __iter__(self):
         """Make set iterable."""
