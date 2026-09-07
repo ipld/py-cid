@@ -272,3 +272,8 @@ replace = 'version = "{new_version}"'
 filename = "cid/__init__.py"
 search = '__version__ = "{current_version}"'
 replace = '__version__ = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "version.json"
+search = "\"version\": \"v{current_version}\""
+replace = "\"version\": \"v{new_version}\""
