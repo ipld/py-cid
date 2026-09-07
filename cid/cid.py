@@ -277,6 +277,7 @@ class CIDv1(BaseCID):
 
     def __init__(self, codec: str, multihash: str | bytes) -> None:
         super().__init__(1, codec, multihash)
+        self._buffer: bytes | None = None
 
     @property
     def buffer(self) -> bytes:
@@ -286,7 +287,11 @@ class CIDv1(BaseCID):
         :return: raw representation of the CID
         :rtype: bytes
         """
-        return b"".join([bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)])
+        if self._buffer is None:
+            self._buffer = b"".join(
+                [bytes([self.version]), multicodec.add_prefix(self.codec, self.multihash)]
+            )
+        return self._buffer
 
     def encode(self, encoding: str | None = "base32") -> bytes:
         """
