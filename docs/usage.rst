@@ -352,7 +352,7 @@ Defined Check
 
 .. code-block:: python
 
-    >>> from cid import CIDv0
+    >>> from cid import CIDv0, Undef
     >>> import multihash
     >>> import hashlib
     >>>
@@ -363,6 +363,12 @@ Defined Check
     >>> cid = CIDv0(mhash)
     >>> cid.defined()
     True
+    >>>
+    >>> # Undef is a sentinel for an undefined/nil CID (like go-cid Undef)
+    >>> Undef.defined()
+    False
+    >>> bool(Undef)
+    False
 
 Stream Parsing
 --------------

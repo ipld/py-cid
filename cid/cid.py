@@ -186,6 +186,39 @@ class BaseCID:
         )
 
 
+class _UndefCID:
+    """Sentinel for undefined/nil CID (go-cid ``Undef``)."""
+
+    _instance: "_UndefCID | None" = None
+
+    def __new__(cls) -> "_UndefCID":
+        if cls._instance is None:
+            cls._instance = cast("_UndefCID", super().__new__(cls))
+        return cls._instance
+
+    def defined(self) -> bool:
+        """Return False; an undefined CID is never defined."""
+        return False
+
+    def __bool__(self) -> bool:
+        return False
+
+    def __repr__(self) -> str:
+        return "CID.Undef"
+
+    def __str__(self) -> str:
+        return "CID.Undef"
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, _UndefCID)
+
+    def __hash__(self) -> int:
+        return hash(_UndefCID)
+
+
+Undef = _UndefCID()
+
+
 class CIDv0(BaseCID):
     """CID version 0 object"""
 
