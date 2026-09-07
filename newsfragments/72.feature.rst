@@ -1,0 +1,1 @@
+Add property-based fuzz testing using `hypothesis` to ensure CID parsing and encoding are robust against arbitrary input and do not crash.
