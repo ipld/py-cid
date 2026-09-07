@@ -81,8 +81,8 @@ class TestCIDv1:
         assert buffer[1:] == multicodec.add_prefix(self.TEST_CODEC, cid.multihash)
 
     def test_encode_default(self, cid):
-        """#encode defaults to base58btc encoding"""
-        assert cid.encode() == b"zdj7WhuEjrB52m1BisYCtmjH1hSKa7yZ3jEZ9JcXaFRD51wVz"
+        """#encode defaults to base32 encoding"""
+        assert cid.encode() == b"bafybeifzjut3te2nhyekklss27nh3k72ysco7y32koao5eei66wof36n5e"
 
     @pytest.mark.parametrize("codec", ENCODINGS)
     def test_encode_encoding(self, cid, codec):
