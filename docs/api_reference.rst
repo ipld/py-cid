@@ -39,6 +39,12 @@ CID classes
     :inherited-members:
     :undoc-members:
 
+.. autoclass:: cid.cid._UndefCID
+    :members:
+    :undoc-members:
+
+.. autodata:: Undef
+
 .. autoclass:: CIDJSONEncoder
     :show-inheritance:
     :members:
